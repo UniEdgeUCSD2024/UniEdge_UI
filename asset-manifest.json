@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/uniedge/static/css/main.a55ca8c8.chunk.css",
+    "main.js": "/uniedge/static/js/main.2dd29803.chunk.js",
+    "main.js.map": "/uniedge/static/js/main.2dd29803.chunk.js.map",
+    "runtime~main.js": "/uniedge/static/js/runtime~main.ba893708.js",
+    "runtime~main.js.map": "/uniedge/static/js/runtime~main.ba893708.js.map",
+    "static/css/2.cc82f8aa.chunk.css": "/uniedge/static/css/2.cc82f8aa.chunk.css",
+    "static/js/2.4772f445.chunk.js": "/uniedge/static/js/2.4772f445.chunk.js",
+    "static/js/2.4772f445.chunk.js.map": "/uniedge/static/js/2.4772f445.chunk.js.map",
+    "index.html": "/uniedge/index.html",
+    "precache-manifest.ee66902824c67800809e51d362867f10.js": "/uniedge/precache-manifest.ee66902824c67800809e51d362867f10.js",
+    "service-worker.js": "/uniedge/service-worker.js",
+    "static/css/2.cc82f8aa.chunk.css.map": "/uniedge/static/css/2.cc82f8aa.chunk.css.map",
+    "static/css/main.a55ca8c8.chunk.css.map": "/uniedge/static/css/main.a55ca8c8.chunk.css.map",
+    "static/media/blk-design-system-react.css": "/uniedge/static/media/dots.b81dabc0.png",
+    "static/media/nucleo-icons.css": "/uniedge/static/media/nucleo.f0b489a5.woff",
+    "static/media/square1.png": "/uniedge/static/media/square1.ca257073.png"
+  }
+}
