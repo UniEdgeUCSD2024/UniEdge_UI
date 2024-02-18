@@ -39,7 +39,7 @@ export default function UserSignup() {
       setError("");
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-      history("/inventory");
+      history("/home");
     } catch (error) {
       console.log(error)
       setError("Failed to create an account");
@@ -92,6 +92,18 @@ export default function UserSignup() {
                             placeholder="Confirm Password"
                             type="password"
                           />
+                          <FormGroup check className="form-check-radio">
+                            <Label check>
+                              <Input defaultValue="student" name="role" type="radio" />
+                              <span className="form-check-sign" />Student
+                            </Label>
+                          </FormGroup>
+                          <FormGroup check className="form-check-radio">
+                            <Label check>
+                              <Input defaultValue="recruiter" name="role" type="radio" />
+                              <span className="form-check-sign" />Recruiter
+                            </Label>
+                          </FormGroup>
                           <FormGroup check className="text-left">
                             <Label check>
                               <Input type="checkbox" />

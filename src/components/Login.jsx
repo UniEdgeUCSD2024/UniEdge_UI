@@ -31,7 +31,7 @@ export default function Login() {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history("/inventory");
+      history("/home");
     } catch (error) {
       console.log(error)
       setError("Failed to log in");
