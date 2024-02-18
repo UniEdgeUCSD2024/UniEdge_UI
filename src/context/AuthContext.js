@@ -13,24 +13,33 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [userKeys, setUserKeys] = useState(null);
 
-  async function signup(email, password) {
-    await auth.createUserWithEmailAndPassword(email, password);    
+  async function signup(email, userName, password, selectedRole) {
+    const response = await auth.createUserWithEmailAndPassword(email, password);
+    const userId = response.user.uid;
+      set(ref(database, 'users/'+userId), {
+        email: email,
+        selectedRole: selectedRole,
+        userName: userName
+      })  
     return;
   }
 
   async function login(email, password) {
-    await auth.signInWithEmailAndPassword(email, password);
+    const response = await auth.signInWithEmailAndPassword(email, password);
+    console.log(response)
+    // const userId = response.user.uid;
+    // await fetchKeys(userId);
     return;
   }
 
-  // async function fetchKeys(userId) {
-  //   const dbRef = ref(database, 'users/'+userId);
-  //   onValue(dbRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     setUserKeys(data);
-  //   });
-  //   return;
-  // }
+  async function fetchKeys(userId) {
+    const dbRef = ref(database, 'users/'+userId);
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      setUserKeys(data);
+    });
+    return;
+  }
 
   function logout() {
     return auth.signOut()
@@ -51,6 +60,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user)
+      fetchKeys(user?.uid);
       setLoading(false)
     })
 

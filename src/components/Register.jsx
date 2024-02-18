@@ -23,6 +23,7 @@ export default function UserSignup() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
+  const userNameRef = useRef();
   const { signup, currentUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,7 @@ export default function UserSignup() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError("Passwords do not match");
     }
@@ -38,8 +40,13 @@ export default function UserSignup() {
     try {
       setError("");
       setLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
-      history("/home");
+      await signup(emailRef.current.value, userNameRef.current.value, passwordRef.current.value, selectedRole);
+      console.log({
+        email: emailRef.current.value,
+        selectedRole: selectedRole,
+        userName: userNameRef.current.value,
+      }); //need to make a backend call here
+      history("/");
     } catch (error) {
       console.log(error)
       setError("Failed to create an account");
@@ -78,6 +85,12 @@ export default function UserSignup() {
                           <Input
                             innerRef={emailRef}
                             placeholder="Email"
+                            type="text"
+                          />
+                          <Input
+                            style={{ marginTop: "1rem" }}
+                            innerRef={userNameRef}
+                            placeholder="User Name"
                             type="text"
                           />
                           <Input

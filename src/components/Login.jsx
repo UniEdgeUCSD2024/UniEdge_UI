@@ -31,12 +31,11 @@ export default function Login() {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history("/home");
+      history("/");
     } catch (error) {
       console.log(error)
       setError("Failed to log in");
     }
-
     setLoading(false);
   }
 
@@ -65,7 +64,7 @@ export default function Login() {
                           {error}
                         </Alert>
                       )}
-                      <Form className="form" onSubmit={handleSubmit}>
+                      <Form className="form">
                         <Input
                           innerRef={emailRef}
                           placeholder="Email"
