@@ -46,7 +46,11 @@ export default function UserSignup() {
         selectedRole: selectedRole,
         userName: userNameRef.current.value,
       }); //need to make a backend call here
-      history("/");
+      if(selectedRole == "student") {
+        history("/student");
+      } else {
+        history("/recruiter");
+      }
     } catch (error) {
       console.log(error)
       setError("Failed to create an account");

@@ -124,6 +124,15 @@ hr {
   overflow: visible;
 }
 
+.jobs-container{
+  margin: 100px;
+}
+
+.content{
+  margin: 0 100px 0 100px;
+  font-size: large;
+}
+
 h1,
 h2,
 h3,
