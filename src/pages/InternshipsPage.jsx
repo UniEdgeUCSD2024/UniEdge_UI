@@ -1,11 +1,11 @@
 import React from "react";
 import InternshipListings from "../components/InternshipListings";
-import IndexNavbar from "../components/Navbars/IndexNavbar";
+import StudentNavbar from "../components/Navbars/StudentNavbar";
 
 const InternshipsPage = () => {
   return (
     <>
-      <IndexNavbar />
+      <StudentNavbar />
       <InternshipListings />
     </>
   );

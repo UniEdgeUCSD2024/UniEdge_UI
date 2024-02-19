@@ -1,10 +1,10 @@
 import React from "react";
 import { Container, Row, Col, Button } from "reactstrap";
-import Footer from "./Footer/Footer";
+import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 
 
-export default function Home() {
+export default function RecruiterHome() {
   const navigate = useNavigate();
 
 
@@ -16,10 +16,17 @@ export default function Home() {
             <Row className="row-grid justify-content-between">
               <Col md="5">
               <div className="content-center brand" style={{marginTop: '5rem'}}>
-              <h2 className="title">Bridging the Gap Between Students and Recruiters</h2>
+              <h2 className="title">A Blockchain-Based Food Supply Chain Application built on
+                Resilient DB</h2>
             <h4 className="description">
-            Our platform is crafted to empower university students and recruiters, offering an optimal matchmaking experience that significantly enhances the job search for students while enabling recruiters to discover top talent that meets their specific needs.
+            Revolutionizing traceability with blockchain integration, empowering industries 
+                through transparent supply chain tracking, and pioneering sustainable innovation by reclaiming 
+                and transforming by-products for a brighter, eco-conscious future.
             </h4>
+            <Button
+                        color="info"
+                        onClick={()=>navigate("/track")}
+                      >Explore the Sample</Button>
               <Button
                         color="success"
                         onClick={()=>navigate("/register")}
@@ -38,7 +45,7 @@ export default function Home() {
             <Row className="justify-content-center">
               <Col lg="12">
                 <h1 className="text-center" style={{ marginBottom: "-5%" }}>
-                  Why UniEdge?
+                  Why Arrayán?
                 </h1>
                 <Row className="row-grid justify-content-center">
                   <Col lg="3" className="text-center">
@@ -46,7 +53,7 @@ export default function Home() {
                       <div className="icon icon-warning">
                         <i className="tim-icons icon-link-72" />
                       </div>
-                      <h4 className="info-title">Enhanced Matching</h4>
+                      <h4 className="info-title">Preserve food safety</h4>
                     </div>
                   </Col>
                   <Col lg="3" className="text-center">
@@ -54,7 +61,7 @@ export default function Home() {
                       <div className="icon icon-danger">
                         <i className="tim-icons icon-lock-circle" />
                       </div>
-                      <h4 className="info-title">Curated Coaching</h4>
+                      <h4 className="info-title">Enhance Food security</h4>
                     </div>
                   </Col>
                   <Col lg="3" className="text-center">
@@ -62,7 +69,7 @@ export default function Home() {
                       <div className="icon icon-primary">
                         <i className="tim-icons icon-chart-pie-36" />
                       </div>
-                      <h4 className="info-title">Recruiter Efficiency</h4>
+                      <h4 className="info-title">Reduce food wastage</h4>
                     </div>
                   </Col>
                   <Col lg="3" className="text-center">
@@ -71,7 +78,7 @@ export default function Home() {
                         <i className="tim-icons icon-spaceship" />
                       </div>
                       <h4 className="info-title">
-                        Onestop Solution for Recruiters & Students
+                        Boost the valorization of by-products
                       </h4>
                     </div>
                   </Col>

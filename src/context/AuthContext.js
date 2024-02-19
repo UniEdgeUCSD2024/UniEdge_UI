@@ -27,8 +27,8 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const response = await auth.signInWithEmailAndPassword(email, password);
     console.log(response)
-    // const userId = response.user.uid;
-    // await fetchKeys(userId);
+    const userId = response.user.uid;
+    await fetchKeys(userId);
     return;
   }
 
@@ -37,6 +37,7 @@ export function AuthProvider({ children }) {
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       setUserKeys(data);
+      console.log(data)
     });
     return;
   }

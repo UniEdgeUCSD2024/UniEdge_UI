@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   Form,
   Button,
@@ -14,7 +14,7 @@ import {
   CardTitle,
   CardFooter,
 } from "reactstrap";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -24,6 +24,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useNavigate();
+  const { userKeys } = useContext(AuthContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -31,7 +32,13 @@ export default function Login() {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history("/");
+      console.log(userKeys);
+      if(userKeys.selectedRole == 'student'){
+        history("/student");
+      }
+      else {
+        history("/RecruiterHomePage");
+      }
     } catch (error) {
       console.log(error)
       setError("Failed to log in");
