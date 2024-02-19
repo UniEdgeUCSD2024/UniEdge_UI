@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/uniedge/static/css/main.73200aee.chunk.css",
-    "main.js": "/uniedge/static/js/main.0ce2b460.chunk.js",
-    "main.js.map": "/uniedge/static/js/main.0ce2b460.chunk.js.map",
+    "main.css": "/uniedge/static/css/main.462662d3.chunk.css",
+    "main.js": "/uniedge/static/js/main.7c05bb2b.chunk.js",
+    "main.js.map": "/uniedge/static/js/main.7c05bb2b.chunk.js.map",
     "runtime~main.js": "/uniedge/static/js/runtime~main.ba893708.js",
     "runtime~main.js.map": "/uniedge/static/js/runtime~main.ba893708.js.map",
     "static/css/2.cc82f8aa.chunk.css": "/uniedge/static/css/2.cc82f8aa.chunk.css",
     "static/js/2.1de0d6a7.chunk.js": "/uniedge/static/js/2.1de0d6a7.chunk.js",
     "static/js/2.1de0d6a7.chunk.js.map": "/uniedge/static/js/2.1de0d6a7.chunk.js.map",
     "index.html": "/uniedge/index.html",
-    "precache-manifest.6dadd41dfff51ec450ef7f3a884ad51e.js": "/uniedge/precache-manifest.6dadd41dfff51ec450ef7f3a884ad51e.js",
+    "precache-manifest.d9ce8d3daffa980ce452f4ec2867e021.js": "/uniedge/precache-manifest.d9ce8d3daffa980ce452f4ec2867e021.js",
     "service-worker.js": "/uniedge/service-worker.js",
     "static/css/2.cc82f8aa.chunk.css.map": "/uniedge/static/css/2.cc82f8aa.chunk.css.map",
-    "static/css/main.73200aee.chunk.css.map": "/uniedge/static/css/main.73200aee.chunk.css.map",
+    "static/css/main.462662d3.chunk.css.map": "/uniedge/static/css/main.462662d3.chunk.css.map",
     "static/media/blk-design-system-react.css": "/uniedge/static/media/dots.b81dabc0.png",
     "static/media/nucleo-icons.css": "/uniedge/static/media/nucleo.f0b489a5.woff",
     "static/media/square1.png": "/uniedge/static/media/square1.ca257073.png"
