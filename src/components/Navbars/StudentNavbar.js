@@ -130,12 +130,16 @@ export default function StudentNavbar() {
                     onClick={(e) => e.preventDefault()}
                   >
                     <i className="fa fa-cogs d-lg-none d-xl-none" />
-                    Hi {currentUser && userKeys ? userKeys.userName : ""} !
+                    Hi {userKeys ? userKeys.username : ""} !
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-with-icons" style={{ backgroundColor: "#171941" }}>
                     <DropdownItem tag={Link} to="/">
                       <i className="tim-icons icon-badge" />
                       Logout
+                    </DropdownItem>
+                    <DropdownItem tag={Link} to="/studentprofile">
+                      <i className="tim-icons icon-badge" />
+                      Profile
                     </DropdownItem>
                   </DropdownMenu>
               </UncontrolledDropdown> 

@@ -32,19 +32,41 @@ export default function Login() {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      console.log(userKeys);
-      if(userKeys.selectedRole == 'student'){
-        history("/student");
-      }
-      else {
-        history("/RecruiterHomePage");
+      if (userKeys && userKeys.role) {
+        if (userKeys.role === 'Student') {
+          history("/student");
+        } else {
+          history("/RecruiterHomePage");
+        }
+        const response = await fetch('https://uniedge-functions.azurewebsites.net/checkuser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: userKeys.email,
+            role: userKeys.role,
+          }),
+        });      
+        const login_state = await response.json(); 
+        if (login_state) {
+          updateLoginState(login_state)
+          console.log(login_state + "loginpage")
+        }
+      } else {
+        setError("User keys not found or invalid");
       }
     } catch (error) {
-      console.log(error)
+      console.error(error);
       setError("Failed to log in");
     }
     setLoading(false);
-  }
+  }  
+
+  function updateLoginState(loginState) {
+    localStorage.setItem('login_state', JSON.stringify(loginState));
+    window.dispatchEvent(new Event('loginStateUpdated'));
+}
 
   return (
     <>

@@ -8,6 +8,7 @@ import ServicesPage from "./pages/ServicesPage";
 import InternshipsPage from "./pages/InternshipsPage";
 import StudentHomePage from "./pages/StudentHomePage";
 import RecruiterHomePage from "./pages/RecruiterHomePage";
+import StudentProfilePage from "./pages/StudentProfilePage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route exact path="/register" element={<RegisterPage/>} />
               <Route exact path="/internships" element={<InternshipsPage/>} />
               <Route exact path="/services" element={<ServicesPage/>} />
+              <Route exact path="/studentprofile" element={<StudentProfilePage/>} />
             </Routes>
           </AuthProvider>
         </Router>

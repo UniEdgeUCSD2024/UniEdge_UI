@@ -32,7 +32,7 @@ export default function UserSignup() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
+    const role = document.querySelector('input[name="role"]:checked')?.value;
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError("Passwords do not match");
     }
@@ -40,13 +40,30 @@ export default function UserSignup() {
     try {
       setError("");
       setLoading(true);
-      await signup(emailRef.current.value, userNameRef.current.value, passwordRef.current.value, selectedRole);
-      console.log({
+      await signup(emailRef.current.value, userNameRef.current.value, passwordRef.current.value, role);
+      const user_reg = {
         email: emailRef.current.value,
-        selectedRole: selectedRole,
-        userName: userNameRef.current.value,
-      }); //need to make a backend call here
-      if(selectedRole == "student") {
+        role: role,
+        username: userNameRef.current.value
+      };
+      const apiUrl = "https://uniedge-functions.azurewebsites.net/createuser";
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user_reg),
+      })
+        .then(response => response.json()) 
+        .then(data => {
+          const user_status = data;
+          console.log("Registration status:", user_status);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+      if (role == "Student") {
         history("/student");
       } else {
         history("/recruiter");
@@ -111,13 +128,13 @@ export default function UserSignup() {
                           />
                           <FormGroup check className="form-check-radio">
                             <Label check>
-                              <Input defaultValue="student" name="role" type="radio" />
+                              <Input defaultValue="Student" name="role" type="radio" />
                               <span className="form-check-sign" />Student
                             </Label>
                           </FormGroup>
                           <FormGroup check className="form-check-radio">
                             <Label check>
-                              <Input defaultValue="recruiter" name="role" type="radio" />
+                              <Input defaultValue="Recruiter" name="role" type="radio" />
                               <span className="form-check-sign" />Recruiter
                             </Label>
                           </FormGroup>

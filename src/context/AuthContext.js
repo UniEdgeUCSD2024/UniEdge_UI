@@ -13,20 +13,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [userKeys, setUserKeys] = useState(null);
 
-  async function signup(email, userName, password, selectedRole) {
+  async function signup(email, username, password, role) {
     const response = await auth.createUserWithEmailAndPassword(email, password);
     const userId = response.user.uid;
       set(ref(database, 'users/'+userId), {
         email: email,
-        selectedRole: selectedRole,
-        userName: userName
+        role: role,
+        username: username
       })  
     return;
   }
 
   async function login(email, password) {
     const response = await auth.signInWithEmailAndPassword(email, password);
-    console.log(response)
     const userId = response.user.uid;
     await fetchKeys(userId);
     return;
@@ -37,7 +36,6 @@ export function AuthProvider({ children }) {
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       setUserKeys(data);
-      console.log(data)
     });
     return;
   }

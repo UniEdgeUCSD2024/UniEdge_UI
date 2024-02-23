@@ -133,6 +133,22 @@ hr {
   font-size: large;
 }
 
+.profile-intro{
+  margin: 100px 0 100px 0;
+  color: #9a9a9a;
+}
+
+.resume-name{
+  color: #ffffff;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 h1,
 h2,
 h3,

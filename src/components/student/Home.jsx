@@ -14,28 +14,28 @@ export default function StudentHome() {
     <>
       <div className="wrapper">
         <section className="section section-lg section-safe">
-                    <Container>
+          <Container>
             <Row className="row-grid justify-content-between">
               <Col md="5">
-              <div className="content-center brand" style={{marginTop: '5rem'}}>
-              <h2 className="title">Empowering Your Job Hunt Journey</h2>
-            <h4 className="description">
-            Hey { userKeys ? userKeys.userName : ""}, UniEdge understands the challenges university students face in today's competitive job market. That's why we're dedicated to supporting your career ambitions. 
-            Explore our tailored job search services, leverage curated coaching, and gain an edge with UniEdge. Let's navigate this journey together and unlock the doors to your professional future.
-            </h4>
-            <Button
-                        color="info"
-                        onClick={()=>navigate("/internships")}
-                      >Explore the Internships</Button>
-              <Button
-                        color="success"
-                        onClick={()=>navigate("/services")}
-                      >Gain Edge with our Services</Button>
-            </div>
+                <div className="content-center brand" style={{ marginTop: '5rem' }}>
+                  <h2 className="title">Empowering Your Job Hunt Journey</h2>
+                  <h4 className="description">
+                    Hey {userKeys ? userKeys.username : ""}, UniEdge understands the challenges university students face in today's competitive job market. That's why we're dedicated to supporting your career ambitions.
+                    Explore our tailored job search services, leverage curated coaching, and gain an edge with UniEdge. Let's navigate this journey together and unlock the doors to your professional future.
+                  </h4>
+                  <Button
+                    color="info"
+                    onClick={() => navigate("/internships")}
+                  >Explore the Internships</Button>
+                  <Button
+                    color="success"
+                    onClick={() => navigate("/services")}
+                  >Gain Edge with our Services</Button>
+                </div>
               </Col>
               <Col md="6">
                 {/* First page picture */}
-                {/* <CoverPicture /> */} 
+                {/* <CoverPicture /> */}
               </Col>
             </Row>
           </Container>
