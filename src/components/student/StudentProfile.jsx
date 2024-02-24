@@ -26,9 +26,8 @@ export default function StudentProfile() {
     const { userKeys } = useContext(AuthContext);
     const FirstNameRef = useRef();
     const LastNameRef = useRef();
-    const profileValue = useRef();
-    const id = useRef();
     const MobileNumberRef = useRef();
+    var [loginState, setLoginState] = useState({});
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [experiences, setExperiences] = useState([]);
@@ -40,8 +39,7 @@ export default function StudentProfile() {
 
     useEffect(() => {
         const checkLoginState = () => {
-            const loginState = localStorage.getItem('login_state');
-            console.log(loginState + "profile_page")
+            loginState = JSON.parse(localStorage.getItem('login_state'));
             if (loginState) {
                 setIsLoginStateChecked(true);
             } else {
@@ -65,27 +63,29 @@ export default function StudentProfile() {
     }    
     async function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
+        const userInfo = {
+            id: JSON.parse(localStorage.getItem('login_state')).id.toString(),
+            profile: JSON.parse(localStorage.getItem('login_state')).profile,
+            firstName: FirstNameRef.current.value,
+            lastName: LastNameRef.current.value,
+            mobileNumber: MobileNumberRef.current.value,
+            experiences: experiences,
+        };
         const formData = new FormData();
-        formData.append('firstName', FirstNameRef.current.value);
-        formData.append('lastName', LastNameRef.current.value);
-        formData.append('mobileNumber', MobileNumberRef.current.value);
-        experiences.forEach((experience, index) => {
-            formData.append(`experiences[${index}]`, JSON.stringify(experience));
-        });
-        if (resume) {
-            formData.append('resume', resume);
-        }
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
+        formData.append('file', resume);
+        formData.append('userInfo', JSON.stringify(userInfo));
+        setLoading(true);
+        setError('');
         try {
             const response = await fetch('https://uniedge-functions.azurewebsites.net/adduser', {
                 method: 'POST',
                 body: formData,
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } 
             const responseData = await response.json();
-            console.log(responseData);
+            console.log(responseData)
         } catch (error) {
             console.error('Error submitting the profile data:', error);
             setError('Failed to submit profile.');
@@ -93,7 +93,7 @@ export default function StudentProfile() {
             setLoading(false);
         }
     }
-
+    
     const addExperience = () => {
         setExperiences([...experiences, { years: '', role: '', company: '' }]);
     };
