@@ -129,6 +129,7 @@ export default function StudentNavbar() {
                     nav
                     onClick={(e) => e.preventDefault()}
                   >
+                    
                     <i className="fa fa-cogs d-lg-none d-xl-none" />
                     Hi {userKeys ? userKeys.username : ""} !
                   </DropdownToggle>
