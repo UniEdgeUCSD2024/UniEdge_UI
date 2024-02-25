@@ -81,7 +81,7 @@ export default function UserSignup() {
   }
 
   function updateRegisterState(user_status) {
-    localStorage.setItem('login_state', JSON.stringify(user_status));
+    window.localStorage.setItem('login_state', JSON.stringify(user_status));
     window.dispatchEvent(new Event('loginStateUpdated'));
 }
 

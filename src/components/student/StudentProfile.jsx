@@ -43,15 +43,18 @@ export default function StudentProfile() {
 
     useEffect(() => {
         const checkLoginState = () => {
-            loginState = JSON.parse(localStorage.getItem('login_state'));
+            loginState = JSON.parse(window.localStorage.getItem('login_state'));
             if (loginState) {
                 setIsLoginStateChecked(true);
                 if (!loginState.profile) {  //need to change when implementing prefilled loginflow i.e when i click profile in login flow, prefilled should come
-                    let prefilled_userInfo = JSON.parse(localStorage.getItem('userInfo'))
+                    let prefilled_userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
                     setEditButtonFlag(true);
-                    setUserInfo(prefilled_userInfo);
-                    let experiencesArray = Array.isArray(prefilled_userInfo.experiences) ? prefilled_userInfo.experiences : [];
-                    setExperiences([...experiencesArray]);
+                    if(prefilled_userInfo){
+                        setUserInfo(prefilled_userInfo);
+                        let experiencesArray = Array.isArray(prefilled_userInfo.experiences) ? prefilled_userInfo.experiences : [];
+                        setExperiences([...experiencesArray]);
+                    }
+
                 }
             } else {
                 setIsLoginStateChecked(false);
@@ -82,8 +85,8 @@ export default function StudentProfile() {
         setError('');
 
         const userInfo = {
-            id: JSON.parse(localStorage.getItem('login_state')).id.toString(),
-            profile: JSON.parse(localStorage.getItem('login_state')).profile,
+            id: JSON.parse(window.localStorage.getItem('login_state')).id.toString(),
+            profile: JSON.parse(window.localStorage.getItem('login_state')).profile,
             firstName: FirstNameRef.current.value,
             lastName: LastNameRef.current.value,
             mobileNumber: MobileNumberRef.current.value,
@@ -104,8 +107,8 @@ export default function StudentProfile() {
             }
             const responseData = await response.json();
             if (responseData && (responseData.message == "Processed successfully" || responseData.message == "Profile Already Created")) {
-                localStorage.setItem('userInfo', JSON.stringify(userInfo));
-                localStorage.setItem('resume',resume);
+                window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                window.localStorage.setItem('resume',resume);
                 setUpdating(false);
                 setLoading(false);
                 setSuccess('Profile Updated Succesfullly');
@@ -180,10 +183,10 @@ export default function StudentProfile() {
                                                 <Input
                                                     id="lastName"
                                                     innerRef={LastNameRef}
-                                                    placeholder="Last Name"
+                                                    placeholder={"Last Name"}
                                                     type="text"
                                                     value = {userInfo?.lastName || ''}
-                                                    onChange={(e) => setUserInfo({ ...userInfo, LastName: e.target.value })}
+                                                    onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                                                 />
                                             </FormGroup>
                                         </Col>

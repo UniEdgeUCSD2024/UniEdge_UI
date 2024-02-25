@@ -64,7 +64,7 @@ export default function Login() {
   }  
 
   function updateLoginState(loginState) {
-    localStorage.setItem('login_state', JSON.stringify(loginState));
+    window.localStorage.setItem('login_state', JSON.stringify(loginState));
     window.dispatchEvent(new Event('loginStateUpdated'));
 }
 
