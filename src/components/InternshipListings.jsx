@@ -5,18 +5,26 @@ import {
 } from 'reactstrap';
 
 function InternshipDetails() {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState([]); // Initialize jobs as an empty array
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
 
   const fetchJobs = (role) => {
     setIsLoading(true);
-    const url = `https://api.jsonbin.io/v3/b/65a245c5266cfc3fde775b9f`; // Assuming URL might take role as a query parameter
-    fetch(url)
+    const url = `https://uniedge-functions.azurewebsites.net/fetchjobdetails`;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        Job_Type: role // Sending the selected role as Job_Type in the request
+      })
+    })
       .then(response => response.json())
       .then(response => {
-        setJobs(response.record);
-        setSelectedRole(role); // Update the selected role
+        setJobs(response); // Set jobs directly to the response array
+        setSelectedRole(role);
       })
       .catch(error => console.error('Error loading job data:', error))
       .finally(() => setIsLoading(false));
@@ -56,9 +64,9 @@ function InternshipDetails() {
                 Internship Type
               </DropdownToggle>
               <DropdownMenu>
-                <DropdownItem onClick={() => handleSelectRole('Business Analyst')}>Business Analyst</DropdownItem>
-                <DropdownItem onClick={() => handleSelectRole('Data Analyst')}>Data Analyst</DropdownItem>
-                <DropdownItem onClick={() => handleSelectRole('Data Scientist')}>Data Scientist</DropdownItem>
+                <DropdownItem onClick={() => handleSelectRole('DataAnalyst')}>Data Analyst</DropdownItem>
+                <DropdownItem onClick={() => handleSelectRole('ProductManagement')}>Product Management</DropdownItem>
+                <DropdownItem onClick={() => handleSelectRole('ProjectManagement')}>Project Management</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Container>

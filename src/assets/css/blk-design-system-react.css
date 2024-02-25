@@ -133,6 +133,15 @@ hr {
   font-size: large;
 }
 
+.edit-button-container{
+  display: flex;
+  justify-content: space-between;
+}
+
+.edit-button{
+  margin-top: 1rem;
+}
+
 .profile-intro{
   margin: 100px 0 100px 0;
   color: #9a9a9a;

@@ -29,19 +29,30 @@ export default function StudentProfile() {
     const MobileNumberRef = useRef();
     var [loginState, setLoginState] = useState({});
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
     const [experiences, setExperiences] = useState([]);
     const [resume, setResume] = useState(null);
     const [resumeName, setResumeName] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false); 
-    const [loginLoading, setLoginLoading] = useState(true); 
     const [isLoginStateChecked, setIsLoginStateChecked] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [updateMessage, setUpdateMessage] = useState("");
+    const [editButtonFlag, setEditButtonFlag] = useState(false);
+    const [userInfo,setUserInfo] = useState({});
+
 
     useEffect(() => {
         const checkLoginState = () => {
             loginState = JSON.parse(localStorage.getItem('login_state'));
             if (loginState) {
                 setIsLoginStateChecked(true);
+                if (!loginState.profile) {  //need to change when implementing prefilled loginflow i.e when i click profile in login flow, prefilled should come
+                    let prefilled_userInfo = JSON.parse(localStorage.getItem('userInfo'))
+                    setEditButtonFlag(true);
+                    setUserInfo(prefilled_userInfo);
+                    let experiencesArray = Array.isArray(prefilled_userInfo.experiences) ? prefilled_userInfo.experiences : [];
+                    setExperiences([...experiencesArray]);
+                }
             } else {
                 setIsLoginStateChecked(false);
             }
@@ -52,6 +63,7 @@ export default function StudentProfile() {
             window.removeEventListener('storage', checkLoginState);
         };
     }, []);
+
     if (!isLoginStateChecked) {
         console.log(isLoginStateChecked);
         return (
@@ -60,9 +72,15 @@ export default function StudentProfile() {
                 <p>Checking login status...</p>
             </div>
         );
-    }    
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
+        setUpdating(true);
+        setUpdateMessage("Updating Profile");
+        setLoading(true);
+        setError('');
+
         const userInfo = {
             id: JSON.parse(localStorage.getItem('login_state')).id.toString(),
             profile: JSON.parse(localStorage.getItem('login_state')).profile,
@@ -71,11 +89,11 @@ export default function StudentProfile() {
             mobileNumber: MobileNumberRef.current.value,
             experiences: experiences,
         };
+        setUserInfo(userInfo);
         const formData = new FormData();
         formData.append('file', resume);
         formData.append('userInfo', JSON.stringify(userInfo));
-        setLoading(true);
-        setError('');
+
         try {
             const response = await fetch('https://uniedge-functions.azurewebsites.net/adduser', {
                 method: 'POST',
@@ -83,17 +101,32 @@ export default function StudentProfile() {
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
-            } 
+            }
             const responseData = await response.json();
-            console.log(responseData)
+            if (responseData && (responseData.message == "Processed successfully" || responseData.message == "Profile Already Created")) {
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                localStorage.setItem('resume',resume);
+                setUpdating(false);
+                setLoading(false);
+                setSuccess('Profile Updated Succesfullly');
+            }
         } catch (error) {
             console.error('Error submitting the profile data:', error);
             setError('Failed to submit profile.');
         } finally {
             setLoading(false);
+            setUpdating(false);
+            setUpdateMessage("");
         }
     }
-    
+    if (updating) {
+        return (
+            <div className="loader-container">
+                <Spinner style={{ width: '3rem', height: '3rem' }} />
+                <p style={{ margin: '1rem' }}>{updateMessage}</p>
+            </div>
+        );
+    }
     const addExperience = () => {
         setExperiences([...experiences, { years: '', role: '', company: '' }]);
     };
@@ -126,18 +159,21 @@ export default function StudentProfile() {
                             <Card class="card-register">
                                 <CardBody>
                                     {error && <Alert color="danger">{error}</Alert>}
+                                    {success && <Alert color="success">{success}</Alert>}
                                     <Form class="form" onSubmit={handleSubmit}>
-                                        <Col md={6}>
-                                            <FormGroup>
-                                                <Label for="firstName">First Name</Label>
-                                                <Input
-                                                    id="firstName"
-                                                    innerRef={FirstNameRef}
-                                                    placeholder="First Name"
-                                                    type="text"
-                                                />
-                                            </FormGroup>
-                                        </Col>
+                                            <Col md={6}>
+                                                <FormGroup>
+                                                    <Label for="firstName">First Name</Label>
+                                                    <Input
+                                                        id="firstName"
+                                                        innerRef={FirstNameRef}
+                                                        placeholder={"First Name"}
+                                                        type="text"
+                                                        value = {userInfo?.firstName || ''}
+                                                        onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
+                                                    />
+                                                </FormGroup>
+                                            </Col>
                                         <Col md={6}>
                                             <FormGroup>
                                                 <Label for="lastName">Last Name</Label>
@@ -146,17 +182,21 @@ export default function StudentProfile() {
                                                     innerRef={LastNameRef}
                                                     placeholder="Last Name"
                                                     type="text"
+                                                    value = {userInfo?.lastName || ''}
+                                                    onChange={(e) => setUserInfo({ ...userInfo, LastName: e.target.value })}
                                                 />
                                             </FormGroup>
                                         </Col>
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="lastName">Mobile Number</Label>
+                                                <Label for="mobileNumber">Mobile Number</Label>
                                                 <Input
                                                     id="mobileNumber"
                                                     innerRef={MobileNumberRef}
                                                     placeholder="Mobile Number"
                                                     type="text"
+                                                    value = {userInfo?.mobileNumber || ''}
+                                                    onChange={(e) => setUserInfo({ ...userInfo, mobileNumber: e.target.value })}
                                                 />
                                             </FormGroup>
                                         </Col>
@@ -166,7 +206,7 @@ export default function StudentProfile() {
                                                     <FormGroup>
                                                         <Label>Years</Label>
                                                         <Input
-                                                            value={experience.years}
+                                                            value={experience?.years}
                                                             onChange={(e) => handleExperienceChange(index, 'years', e.target.value)}
                                                             placeholder="Years"
                                                             type="number"
@@ -177,7 +217,7 @@ export default function StudentProfile() {
                                                     <FormGroup>
                                                         <Label>Role</Label>
                                                         <Input
-                                                            value={experience.role}
+                                                            value={experience?.role}
                                                             onChange={(e) => handleExperienceChange(index, 'role', e.target.value)}
                                                             placeholder="Role"
                                                             type="text"
@@ -188,7 +228,7 @@ export default function StudentProfile() {
                                                     <FormGroup>
                                                         <Label>Company</Label>
                                                         <Input
-                                                            value={experience.company}
+                                                            value={experience?.company}
                                                             onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                                                             placeholder="company"
                                                             type="text"
