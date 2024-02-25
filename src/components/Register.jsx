@@ -58,6 +58,10 @@ export default function UserSignup() {
         .then(data => {
           const user_status = data;
           console.log("Registration status:", user_status);
+          if (user_status) {
+            updateRegisterState(user_status)
+            console.log(user_status + "loginpage")
+          }
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -75,6 +79,11 @@ export default function UserSignup() {
 
     setLoading(false);
   }
+
+  function updateRegisterState(user_status) {
+    localStorage.setItem('login_state', JSON.stringify(user_status));
+    window.dispatchEvent(new Event('loginStateUpdated'));
+}
 
   return (
     <>
