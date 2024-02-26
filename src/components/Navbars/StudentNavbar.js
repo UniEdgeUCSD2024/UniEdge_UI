@@ -22,7 +22,6 @@ export default function StudentNavbar() {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
   const [collapseOut, setCollapseOut] = React.useState("");
   const [color, setColor] = React.useState("navbar-transparent");
-  const { logout } = useAuth();
   const { currentUser } = useContext(AuthContext);
   const { userKeys } = useContext(AuthContext);
 
@@ -44,7 +43,10 @@ export default function StudentNavbar() {
     ) {
       setColor("navbar-transparent");
     }
-  };
+  }; 
+  function logout() {
+    window.localStorage.clear();
+  }
   const toggleCollapse = () => {
     document.documentElement.classList.toggle("nav-open");
     setCollapseOpen(!collapseOpen);
@@ -129,12 +131,12 @@ export default function StudentNavbar() {
                     nav
                     onClick={(e) => e.preventDefault()}
                   >
-                    
+
                     <i className="fa fa-cogs d-lg-none d-xl-none" />
                     Hi {userKeys ? userKeys.username : ""} !
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-with-icons" style={{ backgroundColor: "#171941" }}>
-                    <DropdownItem tag={Link} to="/">
+                    <DropdownItem tag={Link} to="/" onClick={logout}>
                       <i className="tim-icons icon-badge" />
                       Logout
                     </DropdownItem>
