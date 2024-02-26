@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import {
   Container, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
-  Card, CardHeader, CardBody, Spinner
+  Card, CardHeader, CardBody, Button, Spinner
 } from 'reactstrap';
 
 function InternshipDetails() {
-  const [jobs, setJobs] = useState([]); // Initialize jobs as an empty array
+  const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
 
   const fetchJobs = (role) => {
+    setSelectedRole(role);
     setIsLoading(true);
     const url = `https://uniedge-functions.azurewebsites.net/fetchjobdetails`;
     fetch(url, {
@@ -18,13 +19,12 @@ function InternshipDetails() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        Job_Type: role // Sending the selected role as Job_Type in the request
+        Job_Type: role
       })
     })
       .then(response => response.json())
       .then(response => {
-        setJobs(response); // Set jobs directly to the response array
-        setSelectedRole(role);
+        setJobs(response);
       })
       .catch(error => console.error('Error loading job data:', error))
       .finally(() => setIsLoading(false));
@@ -34,6 +34,28 @@ function InternshipDetails() {
     fetchJobs(role);
   };
 
+  const matchFunction = (selectedRole, jobId) => {
+    let user_id = JSON.parse(window.localStorage.getItem('login_state')).id;
+    const requestBody = {
+      type: selectedRole,
+      user_id: user_id.toString(),
+      job_id: jobId
+    };
+    const url = `https://uniedge-functions.azurewebsites.net/Matching`;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json()) 
+        .then(response => {
+      console.log(response); 
+    })
+    .catch(error => console.error('Error in matching:', error)); 
+  };
+  
   const renderJobCards = () => (
     <div className="row">
       {jobs.map((job, index) => (
@@ -47,6 +69,9 @@ function InternshipDetails() {
               <p><strong>Location:</strong> {job.company_location}</p>
               <p><strong>Job Listed:</strong> {job.job_listed}</p>
               <a href={job.job_detail_url}>Job URL</a>
+              <div className="mt-3">
+                <Button color="primary" onClick={() => matchFunction(selectedRole, job.id)}>Check Matching</Button>
+              </div>
             </CardBody>
           </Card>
         </div>
@@ -82,7 +107,7 @@ function InternshipDetails() {
           {isLoading ? (
             <div className="text-center">
               <Spinner style={{ width: '3rem', height: '3rem' }} />
-              <p>Internships are loading...</p>
+              <p> {selectedRole} Internships are loading...</p>
             </div>
           ) : renderJobCards()}
         </div>
