@@ -68,7 +68,7 @@ function InternshipDetails() {
               <p><strong>Company:</strong> {job.company_name}</p>
               <p><strong>Location:</strong> {job.company_location}</p>
               <p><strong>Job Listed:</strong> {job.job_listed}</p>
-              <a href={job.job_detail_url}>Job URL</a>
+              <a href={job.job_detail_url} target="_blank">Job URL</a>
               <div className="mt-3">
                 <Button color="primary" onClick={() => matchFunction(selectedRole, job.id)}>Check Matching</Button>
               </div>
