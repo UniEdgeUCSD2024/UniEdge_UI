@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a390fb9678b1d82c79a3b9f559425435",
+    "revision": "1a2c5fa6a9c04293ecc48fc7cebe368b",
     "url": "/uniedge/index.html"
   },
   {
