@@ -8,6 +8,9 @@ function InternshipDetails() {
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
+  const [isMatchingLoading, setIsMatchingLoading] = useState(false);
+  const [matchingResult, setMatchingResult] = useState(null);
+  const [showOverlay, setShowOverlay] = useState(false);
 
   const fetchJobs = (role) => {
     setSelectedRole(role);
@@ -35,6 +38,9 @@ function InternshipDetails() {
   };
 
   const matchFunction = (selectedRole, jobId) => {
+    setIsMatchingLoading(true); // Start loading
+    setShowOverlay(true);
+    setIsMatchingLoading(true); // Start loading
     let user_id = JSON.parse(window.localStorage.getItem('login_state')).id;
     const requestBody = {
       type: selectedRole,
@@ -49,13 +55,62 @@ function InternshipDetails() {
       },
       body: JSON.stringify(requestBody)
     })
-    .then(response => response.json()) 
-        .then(response => {
-      console.log(response); 
-    })
-    .catch(error => console.error('Error in matching:', error)); 
+      .then(response => response.json())
+      .then(response => {
+        setMatchingResult(response.result); // Store the matching result
+        console.log(response.result)
+        setShowOverlay(true); // Show the overlay with the result
+      })
+      .catch(error => console.error('Error in matching:', error))
+      .finally(() => setIsMatchingLoading(false)); // End loading
   };
-  
+
+  const MatchingOverlay = () => (
+    <div className="overlay" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.75)', // Darkened background for better contrast
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        backgroundColor: '#282c34', // A dark background color for the content box
+        color: 'white', // White text color for better readability
+        padding: '20px',
+        borderRadius: '10px',
+        width: '80%',
+        maxWidth: '400px'
+      }}>
+        {isMatchingLoading ? (
+          <>
+            <Spinner style={{ width: '3rem', height: '3rem', color: 'white' }} /> {/* Spinner color set to white */}
+            <p>Checking matching percentage...</p>
+          </>
+        ) : (
+          <div className="matching-result">
+            <h4>Matching Results</h4>
+            <p>Overall: {matchingResult.Overall}%</p>
+            <p>Experience: {matchingResult.Experience}%</p>
+            <p>Qualifications: {matchingResult.Qualifications}%</p>
+            <p>Technical Skills: {matchingResult.Technical_Skills}%</p>
+            {matchingResult['Non-Technical_Skills'] !== 'NA' && (
+              <p>Non-Technical Skills: {matchingResult['Non-Technical_Skills']}</p>
+            )}
+            <Button onClick={() => setShowOverlay(false)}>Close</Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+
+
+
   const renderJobCards = () => (
     <div className="row">
       {jobs.map((job, index) => (
@@ -81,6 +136,7 @@ function InternshipDetails() {
 
   return (
     <div className="wrapper">
+      {showOverlay && <MatchingOverlay />}
       <div className="content">
         <section className="section section-lg section-safe internship-dropdown">
           <Container>

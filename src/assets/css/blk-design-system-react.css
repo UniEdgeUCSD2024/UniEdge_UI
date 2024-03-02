@@ -127,7 +127,9 @@ hr {
 .jobs-container{
   margin: 100px;
 }
-
+.matching-result {
+  color:black;
+}
 .content{
   margin: 0 100px 0 100px;
   font-size: large;

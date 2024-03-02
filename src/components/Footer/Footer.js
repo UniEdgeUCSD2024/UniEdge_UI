@@ -18,7 +18,7 @@ export default function Footer() {
               <Button
                 className="btn-icon btn-neutral btn-round btn-simple"
                 color="default"
-                href="https://github.com/Amoolya-Reddy/arrayan"
+                href="https://github.com/UniEdgeUCSD2024/uniedge"
                 id="tooltip622135962"
                 target="_blank"
               >
@@ -27,7 +27,7 @@ export default function Footer() {
             </div>
           </Col>
           <Col className="text-center">
-           <p style={{marginTop: '20%'}}>Built on Resilient DB</p> 
+           <p style={{marginTop: '20%'}}>Built on Cosmos DB</p> 
           </Col>
           <Col className="text-center">
            <p style={{marginTop: '20%'}}>© 2024 UniEdge. All Rights Reserved.</p> 
