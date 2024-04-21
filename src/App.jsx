@@ -2,8 +2,8 @@ import RegisterPage from "./pages/RegisterPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage"
 import { AuthProvider } from './context/AuthContext'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import React from "react"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
 import ServicesPage from "./pages/ServicesPage";
 import InternshipsPage from "./pages/InternshipsPage";
 import StudentHomePage from "./pages/StudentHomePage";
