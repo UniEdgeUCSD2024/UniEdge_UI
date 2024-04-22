@@ -11,6 +11,7 @@ function InternshipDetails() {
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const [matchingResult, setMatchingResult] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
+  const token = localStorage.getItem('token');
 
   const fetchJobs = (role) => {
     setSelectedRole(role);
@@ -19,7 +20,8 @@ function InternshipDetails() {
     fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
       },
       body: JSON.stringify({
         Job_Type: role
@@ -51,7 +53,8 @@ function InternshipDetails() {
     fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
       },
       body: JSON.stringify(requestBody)
     })

@@ -96,11 +96,14 @@ export default function StudentProfile() {
         const formData = new FormData();
         formData.append('file', resume);
         formData.append('userInfo', JSON.stringify(userInfo));
-
+        const token = localStorage.getItem('token');
         try {
             const response = await fetch('https://uniedge-functions.azurewebsites.net/adduser', {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}` 
+                  }
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
