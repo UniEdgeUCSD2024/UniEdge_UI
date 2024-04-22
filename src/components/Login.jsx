@@ -29,39 +29,40 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      setError("");
-      setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      if (userKeys && userKeys.role) {
-        if (userKeys.role === 'Student') {
-          history("/student");
+        setError("");
+        setLoading(true);
+        const userCredential = await login(emailRef.current.value, passwordRef.current.value);
+        const token = await userCredential.user.getIdToken();
+        localStorage.setItem('firebase_token', token);
+        if (userKeys && userKeys.role) {
+            const nextPage = userKeys.role === 'Student' ? "/student" : "/RecruiterHomePage";
+            history(nextPage);
+
+            const response = await fetch('https://uniedge-functions.azurewebsites.net/checkuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    email: userKeys.email,
+                    role: userKeys.role,
+                }),
+            });
+            const login_state = await response.json();
+            if (login_state) {
+                updateLoginState(login_state);
+                console.log(login_state + "loginpage");
+            }
         } else {
-          history("/RecruiterHomePage");
+            setError("User keys not found or invalid");
         }
-        const response = await fetch('https://uniedge-functions.azurewebsites.net/checkuser', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: userKeys.email,
-            role: userKeys.role,
-          }),
-        });      
-        const login_state = await response.json(); 
-        if (login_state) {
-          updateLoginState(login_state)
-          console.log(login_state + "loginpage")
-        }
-      } else {
-        setError("User keys not found or invalid");
-      }
     } catch (error) {
-      console.error(error);
-      setError("Failed to log in");
+        console.error(error);
+        setError("Failed to log in");
     }
     setLoading(false);
-  }  
+}
 
   function updateLoginState(loginState) {
     window.localStorage.setItem('login_state', JSON.stringify(loginState));
