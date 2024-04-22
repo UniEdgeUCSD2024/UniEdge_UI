@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { auth, database } from '../auth/firebaseAuthSDK'
 import { set, ref, onValue } from 'firebase/database';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 export const AuthContext = React.createContext()
 
@@ -25,10 +26,13 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-    const response = await auth.signInWithEmailAndPassword(email, password);
+    const auth = getAuth();
+    const response = await signInWithEmailAndPassword(auth, email, password);
     const userId = response.user.uid;
+    const token = await response.user.getIdToken(); // Get the JWT token
     await fetchKeys(userId);
-    return;
+    localStorage.setItem('token', token); // Optionally store the token in localStorage
+    return response.user;
   }
 
   async function fetchKeys(userId) {
