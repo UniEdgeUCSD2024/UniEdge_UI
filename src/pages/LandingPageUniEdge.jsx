@@ -1,7 +1,8 @@
 import React from "react";
-import OriginalHome from "../components/OriginalHome";
+import IndexNavbar from "../components/Navbars/IndexNavbar";
+import Home from "../components/Home";
 
-const LandingPage = () => {
+const LandingPageUniEdge = () => {
   React.useEffect(() => {
     document.body.classList.toggle("index-page");
     return function cleanup() {
@@ -11,11 +12,12 @@ const LandingPage = () => {
 
   return (
     <>
+      <IndexNavbar />
       <div className="wrapper">
-        <OriginalHome />
+        <Home />
         <div className="main"></div>
       </div>
     </>
   );
 };
-export default LandingPage;
+export default LandingPageUniEdge;

@@ -60,7 +60,7 @@ function InternshipDetails() {
     })
       .then(response => response.json())
       .then(response => {
-        setMatchingResult(response.result); // Store the matching result
+        setMatchingResult(response['results are']); // Store the matching result
         console.log(response.result)
         setShowOverlay(true); // Show the overlay with the result
       })
