@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1a16c2c2cba4a758d9f6446cafde0c6d",
+    "revision": "52d722672a93af1aab5ad9e224e4d487",
     "url": "/uniedge/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/uniedge/static/css/2.cc82f8aa.chunk.css"
   },
   {
-    "revision": "7d3b8a60926f6cd88d24",
+    "revision": "1b9e3f1dfd49787f5cc6",
     "url": "/uniedge/static/css/main.43476376.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/uniedge/static/js/2.4a7c7b26.chunk.js"
   },
   {
-    "revision": "7d3b8a60926f6cd88d24",
-    "url": "/uniedge/static/js/main.4f7cbe94.chunk.js"
+    "revision": "1b9e3f1dfd49787f5cc6",
+    "url": "/uniedge/static/js/main.b4a11b39.chunk.js"
   },
   {
     "revision": "2d41b0ca683a8b6671dd",
