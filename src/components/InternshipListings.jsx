@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Container, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
-  Card, CardHeader, CardBody, Button, Spinner, Row, Col
+  Card, CardHeader, CardBody, Button, Spinner, Row, Col, Dropdown
 } from 'reactstrap';
 import { X } from 'react-feather';
 
@@ -16,6 +16,7 @@ function InternshipDetails() {
   const token = localStorage.getItem('token');
   const user_id = JSON.parse(window.localStorage.getItem('login_state')).id;
   const selectedStatesText = selectedStates.length > 0 ? selectedStates.join(", ") : "Location";
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
   const fetchJobs = (role) => {
@@ -66,12 +67,6 @@ function InternshipDetails() {
     }
   };
 
-  const removeStateFilter = (state) => {
-    const newSelectedStates = selectedStates.filter(s => s !== state);
-    setSelectedStates(newSelectedStates);
-    filterDisplayedJobs(newSelectedStates.length > 0 ? newSelectedStates : null);
-  };
-
   const matchFunction = (jobId) => {
     const jobDetails = allJobs.find(job => job.job_id === jobId);
     if (jobDetails) {
@@ -85,6 +80,25 @@ function InternshipDetails() {
       setShowOverlay(true);
     }
   };
+
+  const clearStates = () => {
+    setSelectedStates([]);
+    setDisplayedJobs(allJobs);
+  };
+
+  const getTimeSincePosted = (postedTime) => {
+    const postedDate = new Date(postedTime);
+    const now = new Date();
+    const differenceInMilliseconds = now - postedDate;
+    const hours = differenceInMilliseconds / (1000 * 60 * 60);
+    
+    if (hours < 24) {
+        return `${Math.floor(hours)} hours${Math.floor(hours) !== 1 ? 's' : ''} ago`;
+    } else {
+        const days = Math.floor(hours / 24);
+        return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+};
 
   const MatchingOverlay = () => (
     <div className="overlay" style={{
@@ -133,7 +147,7 @@ function InternshipDetails() {
             <CardBody>
               <p><strong>Company:</strong> {job.company_name}</p>
               <p><strong>Location:</strong> {job.company_location}</p>
-              <p><strong>Job Listed:</strong> {job.job_listed}</p>
+              <p><strong>Job Posted:</strong> {getTimeSincePosted(job.job_posted_time)}</p>
               <a href={job.job_detail_url} target="_blank">Apply</a>
               <div className="mt-3">
                 <Button color="primary" onClick={() => matchFunction(job.job_id)}>Check Matching</Button>
@@ -144,6 +158,8 @@ function InternshipDetails() {
       ))}
     </div>
   );
+
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   return (
     <div className="wrapper">
@@ -165,19 +181,23 @@ function InternshipDetails() {
                 </UncontrolledDropdown>
               </Col>
               <Col md="2">
-                <UncontrolledDropdown>
-                  <DropdownToggle caret data-toggle="dropdown">
+                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                  <DropdownToggle caret>
                     {selectedStatesText}
                   </DropdownToggle>
                   <DropdownMenu style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                  {selectedStates.length > 0 && (
+                      <DropdownItem onClick={clearStates}>
+                        <strong>Clear All</strong>
+                      </DropdownItem>
+                    )}
                     {states.map(state => (
-                      <DropdownItem key={state} onClick={() => handleSelectState(state)}>
+                      <DropdownItem key={state} toggle={false} onClick={() => handleSelectState(state)}>
                         <input type="checkbox" checked={selectedStates.includes(state)} readOnly /> {state}
                       </DropdownItem>
                     ))}
                   </DropdownMenu>
-                </UncontrolledDropdown>
-
+                </Dropdown>
               </Col>
             </Row>
           </Container>
