@@ -9,6 +9,7 @@ function InternshipDetails() {
   const [allJobs, setAllJobs] = useState([]);
   const [displayedJobs, setDisplayedJobs] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
+  const [selectedDateFilter, setSelectedDateFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
   const [matchingResult, setMatchingResult] = useState(null);
@@ -47,24 +48,38 @@ function InternshipDetails() {
     fetchJobs(role);
   };
 
-  const handleSelectState = (state) => {
-    let newSelectedStates;
-    if (selectedStates.includes(state)) {
-      newSelectedStates = selectedStates.filter(s => s !== state);
-    } else {
-      newSelectedStates = [...selectedStates, state];
-    }
-    setSelectedStates(newSelectedStates);
-    filterDisplayedJobs(newSelectedStates.length > 0 ? newSelectedStates : null);
+  const dateOptions = {
+    "Past 24 hours": 1,
+    "3 days ago": 3,
+    "5 days ago": 5,
+    "7 days ago": 7
   };
 
-  const filterDisplayedJobs = (states) => {
-    if (states) {
-      const filteredJobs = allJobs.filter(job => states.includes(job.state));
-      setDisplayedJobs(filteredJobs);
-    } else {
-      setDisplayedJobs(allJobs);
+  const handleSelectState = (state) => {
+    const index = selectedStates.indexOf(state);
+    const newSelectedStates = index >= 0 ? selectedStates.filter(s => s !== state) : [...selectedStates, state];
+    setSelectedStates(newSelectedStates);
+    filterDisplayedJobs(newSelectedStates, selectedDateFilter);
+  };
+
+  const handleSelectDateFilter = (dateFilter) => {
+    setSelectedDateFilter(dateFilter);
+    filterDisplayedJobs(selectedStates, dateFilter);
+  };
+
+  const filterDisplayedJobs = (states, dateFilter) => {
+    let filteredJobs = allJobs;
+    if (states && states.length > 0) {
+      filteredJobs = filteredJobs.filter(job => states.includes(job.state));
     }
+    if (dateFilter) {
+      const daysLimit = dateOptions[dateFilter];
+      filteredJobs = filteredJobs.filter(job => {
+        const daysAgo = parseInt(job.job_posted_time.split(' ')[0]) || 0;
+        return daysAgo <= daysLimit;
+      });
+    }
+    setDisplayedJobs(filteredJobs);
   };
 
   const matchFunction = (jobId) => {
@@ -147,7 +162,7 @@ function InternshipDetails() {
             <CardBody>
               <p><strong>Company:</strong> {job.company_name}</p>
               <p><strong>Location:</strong> {job.company_location}</p>
-              <p><strong>Job Posted:</strong> {getTimeSincePosted(job.job_posted_time)}</p>
+              <p><strong>Job Posted:</strong> {job.job_posted_time}</p>
               <a href={job.job_detail_url} target="_blank">Apply</a>
               <div className="mt-3">
                 <Button color="primary" onClick={() => matchFunction(job.job_id)}>Check Matching</Button>
@@ -198,6 +213,20 @@ function InternshipDetails() {
                     ))}
                   </DropdownMenu>
                 </Dropdown>
+              </Col>
+              <Col md="2">
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>
+                    Date Posted
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    {Object.entries(dateOptions).map(([key, _]) => (
+                      <DropdownItem key={key} onClick={() => handleSelectDateFilter(key)}>
+                        {key}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </Col>
             </Row>
           </Container>
