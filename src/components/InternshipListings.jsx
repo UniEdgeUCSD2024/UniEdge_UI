@@ -37,8 +37,8 @@ function InternshipDetails() {
     })
       .then(response => response.json())
       .then(response => {
-        setAllJobs(response); // Save all jobs fetched
-        setDisplayedJobs(response); // Initially display all jobs
+        setAllJobs(response);
+        setDisplayedJobs(response);
       })
       .catch(error => console.error('Error loading job data:', error))
       .finally(() => setIsLoading(false));
@@ -190,8 +190,13 @@ function InternshipDetails() {
                   </DropdownToggle>
                   <DropdownMenu>
                     <DropdownItem onClick={() => handleSelectRole('BusinessAnalyst')}>Business Analyst</DropdownItem>
+                    <DropdownItem onClick={() => handleSelectRole('DataAnalyst')}>Data Analyst</DropdownItem>
+                    <DropdownItem onClick={() => handleSelectRole('DataEngineer')}>Data Engineer</DropdownItem>
+                    <DropdownItem onClick={() => handleSelectRole('DataScientist')}>Data Scientist</DropdownItem>
                     <DropdownItem onClick={() => handleSelectRole('ProductManagement')}>Product Management</DropdownItem>
                     <DropdownItem onClick={() => handleSelectRole('ProjectManagement')}>Project Management</DropdownItem>
+                    <DropdownItem onClick={() => handleSelectRole('Consultant')}>Consultant</DropdownItem>
+                    <DropdownItem onClick={() => handleSelectRole('HRManager')}>HRManager</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
               </Col>
