@@ -19,16 +19,16 @@ function App() {
         <Router basename={process.env.PUBLIC_URL}>
           <AuthProvider>
             <Routes>
-            <Route exact path="/" element={<LandingPage/>} />
-              <Route exact path="/uniedge" element={<LandingPageUniEdge/>} />
-              <Route exact path="/student" element={<StudentHomePage/>} />
-              <Route exact path="/recruiter" element={<RecruiterHomePage/>} />
-              <Route exact path="/login" element={<LoginPage/>} />
-              <Route exact path="/register" element={<RegisterPage/>} />
-              <Route exact path="/internships" element={<InternshipsPage/>} />
-              <Route exact path="/services" element={<ServicesPage/>} />
-              <Route exact path="/studentprofile" element={<StudentProfilePage/>} />
-              <Route exact path="/volunteer" element={<VolunteerPage/>} />
+              <Route  path="/" element={<LandingPage/>} />
+              <Route  path="/uniedge" element={<LandingPageUniEdge/>} />
+              <Route  path="/student" element={<StudentHomePage/>} />
+              <Route  path="/recruiter" element={<RecruiterHomePage/>} />
+              <Route  path="/login" element={<LoginPage/>} />
+              <Route  path="/register" element={<RegisterPage/>} />
+              <Route  path="/internships" element={<InternshipsPage/>} />
+              <Route  path="/services" element={<ServicesPage/>} />
+              <Route  path="/studentprofile" element={<StudentProfilePage/>} />
+              <Route  path="/volunteer" element={<VolunteerPage/>} />
             </Routes>
           </AuthProvider>
         </Router>
