@@ -2,7 +2,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LandingPageUniEdge from "./pages/LandingPageUniEdge";
 import LoginPage from "./pages/LoginPage";
 import { AuthProvider } from './context/AuthContext';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import ServicesPage from "./pages/ServicesPage";
 import InternshipsPage from "./pages/InternshipsPage";
