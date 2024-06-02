@@ -22,6 +22,8 @@ export function AuthProvider({ children }) {
         role: role,
         username: username
       })  
+    const token = await response.user.getIdToken();
+    localStorage.setItem('token', token);
     return;
   }
 

@@ -28,6 +28,7 @@ export default function UserSignup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useNavigate();
+  const token = localStorage.getItem('token');
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -51,6 +52,7 @@ export default function UserSignup() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify(user_reg),
       })
