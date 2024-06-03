@@ -20,7 +20,7 @@ function InternshipDetails() {
   const selectedStatesText = selectedStates.length > 0 ? selectedStates.join(", ") : "Location";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
-
+  const [infoMessage, setInfoMessage] = useState('');
   const fetchJobs = (role) => {
     setSelectedRole(role);
     setIsLoading(true);
@@ -38,8 +38,12 @@ function InternshipDetails() {
     })
       .then(response => response.json())
       .then(response => {
-        setAllJobs(response);
-        setDisplayedJobs(response);
+        if (response.length === 0) {
+          setInfoMessage("Jobs are currently being updated. Hang tight, and try refreshing in a minute for fresh listings!");
+        } else {
+          setAllJobs(response);
+          setDisplayedJobs(response);
+        }
       })
       .catch(error => console.error('Error loading job data:', error))
       .finally(() => setIsLoading(false));
@@ -226,9 +230,15 @@ function InternshipDetails() {
         <div className="content">
       {profile ? (
         allJobs.length === 0 ? (
-          <p className="role-not-clicked">
-            Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.
-          </p>
+          <div>
+          {infoMessage ? (
+            <p className="info-message">{infoMessage}</p>
+          ) : (
+            <p className="role-not-clicked">
+              Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.
+            </p>
+          )}
+        </div>
         ) : (
           <p className="role-clicked">
             Please find all the latest {selectedRole} internships in the USA, and take your first step at job search by applying.
