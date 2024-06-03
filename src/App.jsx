@@ -12,6 +12,7 @@ import ServicesPage from './pages/ServicesPage';
 import StudentProfilePage from './pages/StudentProfilePage';
 import VolunteerPage from './pages/VolunteerPage';
 import LandingPageUniEdge from "./pages/LandingPageUniEdge";
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/studentprofile" element={<StudentProfilePage />} />
             <Route path="/volunteer" element={<VolunteerPage />} />
+            <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
           </Route>
         </Routes>
       </AuthProvider>

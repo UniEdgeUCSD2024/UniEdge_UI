@@ -121,7 +121,7 @@ export default function Login() {
                     </CardFooter>
                   </Card>
                   <div className="text-center">
-                    <Link to="/forgot-password">Forgot Password?</Link>
+                    <Link to="/forgotpassword">Forgot Password?</Link>
                   </div>
                   <div className="w-100 text-center mt-2">
                     Need an account? <Link to="/register">Sign Up</Link>
