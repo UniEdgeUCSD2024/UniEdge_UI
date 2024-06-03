@@ -59,10 +59,8 @@ export default function UserSignup() {
         .then(response => response.json()) 
         .then(data => {
           const user_status = data;
-          console.log("Registration status:", user_status);
           if (user_status) {
             updateRegisterState(user_status)
-            console.log(user_status + "loginpage")
           }
         })
         .catch((error) => {
@@ -75,10 +73,24 @@ export default function UserSignup() {
         history("/recruiter");
       }
     } catch (error) {
-      console.log(error)
-      setError("Failed to create an account");
+      let errorMessage = ""
+      if (error.code) {
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = "The email address is already in use by another account.";
+            break;
+          case 'auth/invalid-email':
+            errorMessage = "The email address is not valid.";
+            break;
+          case 'auth/weak-password':
+            errorMessage = "The password is too weak.";
+            break;        
+          default:
+            errorMessage = "Failed to Create an Account"
+        }
+      }
+      setError(errorMessage);
     }
-
     setLoading(false);
   }
 

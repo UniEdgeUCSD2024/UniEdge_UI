@@ -3,9 +3,9 @@ import {
   Container, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
   Card, CardHeader, CardBody, Button, Spinner, Row, Col, Dropdown
 } from 'reactstrap';
-import { X } from 'react-feather';
-
+import {useNavigate } from "react-router-dom";
 function InternshipDetails() {
+  const navigate = useNavigate();
   const [allJobs, setAllJobs] = useState([]);
   const [displayedJobs, setDisplayedJobs] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
@@ -16,6 +16,7 @@ function InternshipDetails() {
   const [showOverlay, setShowOverlay] = useState(false);
   const token = localStorage.getItem('token');
   const user_id = JSON.parse(window.localStorage.getItem('login_state')).id;
+  const profile = JSON.parse(window.localStorage.getItem('login_state')).profile;
   const selectedStatesText = selectedStates.length > 0 ? selectedStates.join(", ") : "Location";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
@@ -101,20 +102,6 @@ function InternshipDetails() {
     setDisplayedJobs(allJobs);
   };
 
-  const getTimeSincePosted = (postedTime) => {
-    const postedDate = new Date(postedTime);
-    const now = new Date();
-    const differenceInMilliseconds = now - postedDate;
-    const hours = differenceInMilliseconds / (1000 * 60 * 60);
-    
-    if (hours < 24) {
-        return `${Math.floor(hours)} hours${Math.floor(hours) !== 1 ? 's' : ''} ago`;
-    } else {
-        const days = Math.floor(hours / 24);
-        return `${days} day${days !== 1 ? 's' : ''} ago`;
-    }
-};
-
   const MatchingOverlay = () => (
     <div className="overlay" style={{
       position: 'fixed',
@@ -143,7 +130,7 @@ function InternshipDetails() {
           <p>Qualifications: {matchingResult?.Qualifications}%</p>
           <p>Technical Skills: {matchingResult?.Technical_Skills}%</p>
           {matchingResult?.Non_Technical_Skills && matchingResult.Non_Technical_Skills !== 'NA' && (
-          <p>Non-Technical Skills: {matchingResult.Non_Technical_Skills}</p>
+          <p>Non-Technical Skills: {matchingResult.Non_Technical_Skills}%</p>
         )}
           <Button onClick={() => setShowOverlay(false)}>Close</Button>
         </div>
@@ -181,7 +168,7 @@ function InternshipDetails() {
       {showOverlay && <MatchingOverlay />}
       <div className="content">
         <section className="section section-lg section-safe internship-dropdown">
-          <Container>
+          {profile && <Container>
             <Row>
               <Col md="2">
                 <UncontrolledDropdown>
@@ -234,15 +221,28 @@ function InternshipDetails() {
                 </UncontrolledDropdown>
               </Col>
             </Row>
-          </Container>
+          </Container>}
         </section>
         <div className="content">
-          {allJobs.length === 0 ? (
-            <p className="role-not-clicked">Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.</p>
-          ) : (
-            <p className="role-clicked">Please find all the latest {selectedRole} internships in the USA, and take your first step at job search by applying.</p>
-          )}
-        </div>
+      {profile ? (
+        allJobs.length === 0 ? (
+          <p className="role-not-clicked">
+            Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.
+          </p>
+        ) : (
+          <p className="role-clicked">
+            Please find all the latest {selectedRole} internships in the USA, and take your first step at job search by applying.
+          </p>
+        )
+      ) : (
+        <p className="role-clicked">
+          To view internship listings, please ensure your profile is fully updated on the <Button
+            color="info"
+            onClick={() => navigate("/studentprofile")}
+          >Profile</Button> page
+        </p>
+      )}
+    </div>
         <div id="jobs-container" className="jobs-container">
           {isLoading ? (
             <div className="text-center">

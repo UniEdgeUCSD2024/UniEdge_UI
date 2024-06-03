@@ -53,7 +53,6 @@ export default function Login() {
         const login_state = await response.json(); 
         if (login_state) {
           updateLoginState(login_state)
-          console.log(login_state + "loginpage")
         }
       } else {
         setError("User keys not found or invalid");

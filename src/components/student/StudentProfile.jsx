@@ -46,7 +46,7 @@ export default function StudentProfile() {
             loginState = JSON.parse(window.localStorage.getItem('login_state'));
             if (loginState) {
                 setIsLoginStateChecked(true);
-                if (!loginState.profile) {  //need to change when implementing prefilled loginflow i.e when i click profile in login flow, prefilled should come
+                if (!loginState.profile) {
                     let prefilled_userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
                     setEditButtonFlag(true);
                     if(prefilled_userInfo){
@@ -54,7 +54,6 @@ export default function StudentProfile() {
                         let experiencesArray = Array.isArray(prefilled_userInfo.experiences) ? prefilled_userInfo.experiences : [];
                         setExperiences([...experiencesArray]);
                     }
-
                 }
             } else {
                 setIsLoginStateChecked(false);
@@ -68,7 +67,6 @@ export default function StudentProfile() {
     }, []);
 
     if (!isLoginStateChecked) {
-        console.log(isLoginStateChecked);
         return (
             <div class="loader-container">
                 <Spinner style={{ width: '3rem', height: '3rem' }} />
@@ -114,7 +112,10 @@ export default function StudentProfile() {
                 window.localStorage.setItem('resume',resume);
                 setUpdating(false);
                 setLoading(false);
-                setSuccess('Profile Updated Succesfullly');
+                setSuccess('Profile Updated Succesfullly ');
+                const loginState = JSON.parse(window.localStorage.getItem('login_state')) || {};
+                loginState.profile = responseData.profile;
+                window.localStorage.setItem('login_state', JSON.stringify(loginState));
             }
         } catch (error) {
             console.error('Error submitting the profile data:', error);
@@ -165,7 +166,10 @@ export default function StudentProfile() {
                             <Card class="card-register">
                                 <CardBody>
                                     {error && <Alert color="danger">{error}</Alert>}
-                                    {success && <Alert color="success">{success}</Alert>}
+                                    {success && <Alert color="success">{success} Please explore the <Button
+                                    color="info"
+                                    onClick={() => navigate("/internships")}
+                                    >Internships</Button></Alert>}
                                     <Form class="form" onSubmit={handleSubmit}>
                                             <Col md={6}>
                                                 <FormGroup>

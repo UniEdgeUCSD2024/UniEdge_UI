@@ -24,7 +24,11 @@ export default function OriginalHome() {
                   <Button
                     color="success"
                     onClick={() => navigate("/register")}
-                  >Register with us</Button>
+                  >New User? Register</Button>
+                                    <Button
+                    color="primary"
+                    onClick={() => navigate("/login")}
+                  >Existing User? Login</Button>
                 </div>
               </Col>
               <Col md="6">
