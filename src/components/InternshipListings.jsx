@@ -101,6 +101,12 @@ function InternshipDetails() {
     }
   };
 
+
+  const checkATS = (jobId) => {
+    const jobDetails = allJobs.find(job => job.job_id === jobId);
+    console.log(user_id,jobId)
+  };
+
   const clearStates = () => {
     setSelectedStates([]);
     setDisplayedJobs(allJobs);
@@ -157,6 +163,7 @@ function InternshipDetails() {
               <a href={job.job_detail_url} target="_blank">Apply</a>
               <div className="mt-3">
                 <Button color="primary" onClick={() => matchFunction(job.job_id)}>Check Matching</Button>
+                <Button color="info" onClick={() => checkATS(job.job_id)}>Check ATS</Button>
               </div>
             </CardBody>
           </Card>

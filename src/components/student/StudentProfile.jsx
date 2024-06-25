@@ -27,6 +27,7 @@ export default function StudentProfile() {
     const FirstNameRef = useRef();
     const LastNameRef = useRef();
     const MobileNumberRef = useRef();
+    const GPARef = useRef();
     var [loginState, setLoginState] = useState({});
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -88,6 +89,7 @@ export default function StudentProfile() {
             firstName: FirstNameRef.current.value,
             lastName: LastNameRef.current.value,
             mobileNumber: MobileNumberRef.current.value,
+            GPA: GPARef.current.value,
             experiences: experiences,
         };
         setUserInfo(userInfo);
@@ -207,6 +209,19 @@ export default function StudentProfile() {
                                                     type="text"
                                                     value = {userInfo?.mobileNumber || ''}
                                                     onChange={(e) => setUserInfo({ ...userInfo, mobileNumber: e.target.value })}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="GPA">GPA</Label>
+                                                <Input
+                                                    id="GPA"
+                                                    innerRef={GPARef}
+                                                    placeholder="GPA out 4"
+                                                    type="text"
+                                                    value = {userInfo?.GPA || ''}
+                                                    onChange={(e) => setUserInfo({ ...userInfo, GPA: e.target.value })}
                                                 />
                                             </FormGroup>
                                         </Col>
