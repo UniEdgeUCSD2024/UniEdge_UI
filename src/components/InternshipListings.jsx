@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
   Container, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
-  Card, CardHeader, CardBody, Button, Spinner, Row, Col, Dropdown
+  Card, CardHeader, CardBody, Button, Spinner, Row, Col, Dropdown, Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 function InternshipDetails() {
   const navigate = useNavigate();
   const [allJobs, setAllJobs] = useState([]);
@@ -19,8 +20,14 @@ function InternshipDetails() {
   const profile = JSON.parse(window.localStorage.getItem('login_state')).profile;
   const selectedStatesText = selectedStates.length > 0 ? selectedStates.join(", ") : "Location";
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [modalColor, setModalColor] = useState('');
+  const [infoMessage, setInfoMessage] = useState(''); // Initializing infoMessage and its setter
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
-  const [infoMessage, setInfoMessage] = useState('');
+
+  const toggleModal = () => setModal(!modal);
+
   const fetchJobs = (role) => {
     setSelectedRole(role);
     setIsLoading(true);
@@ -36,17 +43,17 @@ function InternshipDetails() {
         user_id: user_id
       })
     })
-      .then(response => response.json())
-      .then(response => {
-        if (response.length === 0) {
-          setInfoMessage("Jobs are currently being updated. Hang tight, and try refreshing in a minute for fresh listings!");
-        } else {
-          setAllJobs(response);
-          setDisplayedJobs(response);
-        }
-      })
-      .catch(error => console.error('Error loading job data:', error))
-      .finally(() => setIsLoading(false));
+    .then(response => response.json())
+    .then(response => {
+      if (response.length === 0) {
+        setInfoMessage("Jobs are currently being updated. Hang tight, and try refreshing in a minute for fresh listings!");
+      } else {
+        setAllJobs(response);
+        setDisplayedJobs(response);
+      }
+    })
+    .catch(error => console.error('Error loading job data:', error))
+    .finally(() => setIsLoading(false));
   };
 
   const handleSelectRole = (role) => {
@@ -101,11 +108,50 @@ function InternshipDetails() {
     }
   };
 
-
   const checkATS = (jobId) => {
     const jobDetails = allJobs.find(job => job.job_id === jobId);
-    console.log(user_id,jobId)
+    if (!jobDetails) {
+      alert("Job not found");
+      return;
+    }
+  
+    const payload = {
+      user_id: user_id,
+      job_id: jobId
+    };
+  
+    fetch('https://uniedge-functions.azurewebsites.net/checkats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      let message;
+      if (data.status === "Pass") {
+        message = "Your GPA looks good! Please have it on your Resume.";
+        setModalColor('green');
+      } else if (data.status === "Fail") {
+        message = "Your GPA is below 4; most recruiters remove candidates that don't have a 4 GPA, so you might want to remove the GPA information from your resume.";
+        setModalColor('red');
+      } else if (data.error) {
+        message = "GPA not found for the user. Please re-upload your GPA on profile page";
+        setModalColor('red');
+      }
+      setModalContent(message);
+      toggleModal();
+    })
+    .catch(error => {
+      console.error('Error checking ATS:', error);
+      setModalContent("Failed to connect to ATS. Please try again.");
+      setModalColor('red');
+      toggleModal();
+    });
   };
+  
 
   const clearStates = () => {
     setSelectedStates([]);
@@ -177,6 +223,13 @@ function InternshipDetails() {
   return (
     <div className="wrapper">
       {showOverlay && <MatchingOverlay />}
+      <Modal isOpen={modal} toggle={toggleModal} contentClassName={{color: modalColor}}>
+        <ModalHeader toggle={toggleModal}>ATS Check</ModalHeader>
+        <ModalBody>{modalContent}</ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={toggleModal}>Close</Button>
+        </ModalFooter>
+      </Modal>
       <div className="content">
         <section className="section section-lg section-safe internship-dropdown">
           {profile && <Container>
@@ -204,7 +257,7 @@ function InternshipDetails() {
                     {selectedStatesText}
                   </DropdownToggle>
                   <DropdownMenu style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  {selectedStates.length > 0 && (
+                    {selectedStates.length > 0 && (
                       <DropdownItem onClick={clearStates}>
                         <strong>Clear All</strong>
                       </DropdownItem>
@@ -235,31 +288,31 @@ function InternshipDetails() {
           </Container>}
         </section>
         <div className="content">
-      {profile ? (
-        allJobs.length === 0 ? (
-          <div>
-          {infoMessage ? (
-            <p className="info-message">{infoMessage}</p>
+          {profile ? (
+            allJobs.length === 0 ? (
+              <div>
+                {infoMessage ? (
+                  <p className="info-message">{infoMessage}</p>
+                ) : (
+                  <p className="role-not-clicked">
+                    Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="role-clicked">
+                Please find all the latest {selectedRole} internships in the USA, and take your first step at job search by applying.
+              </p>
+            )
           ) : (
-            <p className="role-not-clicked">
-              Find the latest internship opportunities tailored to your dream role by selecting your preferred position from the dropdown menu above and begin your job search journey with us.
+            <p className="role-clicked">
+              To view internship listings, please ensure your profile is fully updated on the <Button
+                color="info"
+                onClick={() => navigate("/studentprofile")}
+              >Profile</Button> page
             </p>
           )}
         </div>
-        ) : (
-          <p className="role-clicked">
-            Please find all the latest {selectedRole} internships in the USA, and take your first step at job search by applying.
-          </p>
-        )
-      ) : (
-        <p className="role-clicked">
-          To view internship listings, please ensure your profile is fully updated on the <Button
-            color="info"
-            onClick={() => navigate("/studentprofile")}
-          >Profile</Button> page
-        </p>
-      )}
-    </div>
         <div id="jobs-container" className="jobs-container">
           {isLoading ? (
             <div className="text-center">
