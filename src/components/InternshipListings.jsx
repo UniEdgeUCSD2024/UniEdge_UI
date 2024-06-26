@@ -128,6 +128,9 @@ function InternshipDetails() {
       },
       body: JSON.stringify(payload)
     })
+
+    
+
     .then(response => response.json())
     .then(data => {
       let message;
