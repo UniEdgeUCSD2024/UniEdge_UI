@@ -129,7 +129,7 @@ function InternshipDetails() {
       body: JSON.stringify(payload)
     })
 
-    
+
 
     .then(response => response.json())
     .then(data => {
@@ -138,7 +138,7 @@ function InternshipDetails() {
         message = "Your GPA looks good! Please have it on your Resume.";
         setModalColor('green');
       } else if (data.status === "Fail") {
-        message = "Your GPA is below 4; most recruiters remove candidates that don't have a 4 GPA, so you might want to remove the GPA information from your resume.";
+        message = "Even though you have a good GPA, it's not a perfect 4. You might consider whether to include it on your resume, depending on the specific requirements of the jobs you're applying for.";
         setModalColor('red');
       } else if (data.error) {
         message = "GPA not found for the user. Please re-upload your GPA on profile page";
