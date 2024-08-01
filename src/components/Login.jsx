@@ -81,7 +81,7 @@ export default function Login() {
                     <CardHeader>
                       <CardImg
                         alt="..."
-                        src={require("../assets/img/square1.png")}
+                        src={require("../assets/img/square-gold.png")}
                       />
                       <CardTitle tag="h3">Login</CardTitle>
                     </CardHeader>

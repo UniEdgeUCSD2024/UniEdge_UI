@@ -148,7 +148,7 @@ export default function IndexNavbar() {
                 <i className="fa fa-cogs d-lg-none d-xl-none" />
                 Getting started
               </DropdownToggle>
-              <DropdownMenu className="dropdown-with-icons" style={{backgroundColor: "#171941"}}>
+              <DropdownMenu className="dropdown-with-icons" style={{backgroundColor: "#262626"}}>
                 <DropdownItem tag={Link} to="/login">
                   <i className="tim-icons icon-badge" />
                   Login

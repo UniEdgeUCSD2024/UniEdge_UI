@@ -13,6 +13,8 @@ import StudentProfilePage from './pages/StudentProfilePage';
 import VolunteerPage from './pages/VolunteerPage';
 import LandingPageUniEdge from "./pages/LandingPageUniEdge";
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import LandingPageMentoring from './pages/LandingPageMentoring';
+import MentorRegisterPage from './pages/MentorRegister';
 
 const App = () => {
   return (
@@ -22,9 +24,8 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<LandingPage />} />
-          <Route  path="/uniedge" element={<LandingPageUniEdge/>} />
-
-
+          <Route path="/uniedge" element={<LandingPageUniEdge/>} />
+          <Route path="/mentoringlanding" element={<LandingPageMentoring/>} />
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/student" element={<StudentHomePage />} />
@@ -34,6 +35,7 @@ const App = () => {
             <Route path="/studentprofile" element={<StudentProfilePage />} />
             <Route path="/volunteer" element={<VolunteerPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
+            <Route path="/mentorregister" element={<MentorRegisterPage />} />
           </Route>
         </Routes>
       </AuthProvider>

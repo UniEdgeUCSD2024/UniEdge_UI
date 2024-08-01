@@ -17,10 +17,9 @@ export default function OriginalHome() {
             <Row className="row-grid justify-content-between">
               <Col md="5">
                 <div className="content-center brand" style={{ marginTop: '5rem' }}>
-                  <h2 className="title">You spark change and growth through the right matches.</h2>
+                  <h2 className="title">Ignite transformation and growth with the perfect connections.</h2>
                   <h4 className="description">
-                    Your next big adventure starts with the right match. Let's find it together. We're not just matching; we're building relationships that last. Discover your perfect match – whether it's for a career, a startup, or love.
-                  </h4>
+                  Embark on your next adventure with the ideal match. Together, we build lasting relationships, whether for a career, mentoring, or partnering. Find your perfect connection with us</h4>
                   <Button
                     color="success"
                     onClick={() => navigate("/register")}
@@ -50,7 +49,7 @@ export default function OriginalHome() {
                       <CardBody>
                         <CardTitle tag="h2" className="text-bold title">LINK UP VOLUNTEERING</CardTitle>
                         <CardText>
-                        Links students with organizations to unlock volunteer opportunities. This platform allows students to enhance their skills and networks, while organizations benefit from fresh, energetic contributions, strengthening communities and fostering future leaders.</CardText>
+                        Connects students with organizations to unlock volunteer opportunities. Enhance skills and networks while organizations gain fresh, energetic contributions, strengthening communities and fostering future leaders.</CardText>
                         <Button className="btn-round" color="success"
                         onClick={() => navigate("/volunteer")}
                         >Learn More</Button> {/* Changed color to success */}
@@ -62,7 +61,7 @@ export default function OriginalHome() {
                       <CardBody>
                         <CardTitle tag="h2" className="text-bold title">UNIEDGE</CardTitle>
                         <CardText>
-                          Connect with top recruiters and discover exciting opportunities. Whether you're a fresh graduate or an experienced professional, we'll match you with companies that value your skills and aspirations.
+                        Engage with top recruiters and explore exciting opportunities. Whether a recent graduate or seasoned professional, we'll connect you with companies that value your skills and aspirations.
                         </CardText>
                         <Button className="btn-round" color="primary" 
                         onClick={() => navigate("/uniedge")}
@@ -74,11 +73,10 @@ export default function OriginalHome() {
                   <Col md="4">
                     <Card className="card-plain">
                       <CardBody>
-                        <CardTitle tag="h2" className="text-bold title"> FUEL STARTUP</CardTitle>
+                        <CardTitle tag="h2" className="text-bold title">MENTORING</CardTitle>
                         <CardText>
-                          Find the perfect investors and mentors to propel your startup to success. Our platform connects innovative startups with Y Combinator-like programs and experienced investors who share your vision.
-                        </CardText>
-                        <Button className="btn-round" color="success">Learn More</Button> {/* Changed color to success */}
+                          Discover the ideal investors and mentors to propel your organization's success. Our platform connects organizations with industry experts who share your vision and can help you realize the full potential of your ideas.                        </CardText>
+                        <Button className="btn-round" color="success" onClick={() => navigate("/mentoringlanding")}>Learn More</Button> {/* Changed color to success */}
                       </CardBody>
                     </Card>
                   </Col>

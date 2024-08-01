@@ -152,13 +152,13 @@ export default function UserSignup() {
                           <FormGroup check className="form-check-radio">
                             <Label check>
                               <Input defaultValue="Student" name="role" type="radio" />
-                              <span className="form-check-sign" />Student
+                              <span className="form-check-sign" />Mentor
                             </Label>
                           </FormGroup>
                           <FormGroup check className="form-check-radio">
                             <Label check>
                               <Input defaultValue="Recruiter" name="role" type="radio" />
-                              <span className="form-check-sign" />Recruiter
+                              <span className="form-check-sign" />Mentee
                             </Label>
                           </FormGroup>
                           <FormGroup check className="text-left">
