@@ -21,7 +21,7 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className='wrapper landing-page'>
+      <div className='wrapper'>
         <LandingNavbar />
         <OriginalHome />
       </div>

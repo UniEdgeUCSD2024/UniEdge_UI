@@ -91,7 +91,7 @@ export default function OriginalHome() {
         </Row>
       </section>
 
-      <section className='section section-lg'>
+      <section className=''>
         <Container>
           <Row className='justify-content-center'>
             <Col lg='12'>
