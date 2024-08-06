@@ -49,7 +49,7 @@ export default function LandingNavbar() {
             <NavLink href='#'>Resources</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink href='#'>
+            <NavLink href='#/login'>
               <Button color='primary'>Login</Button>
             </NavLink>
           </NavItem>
