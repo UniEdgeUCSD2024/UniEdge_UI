@@ -1,29 +1,41 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'reactstrap';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardText,
+  CardTitle,
+  Col,
+  Container,
+  Row,
+} from 'reactstrap';
 import Footer from './Footer/Footer';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
-import comprehensiveResources from '../assets/img/Comprehensive Resources.png';
-import personalizedMatching from '../assets/img/Personalized Matching.png';
-import communitySupport from '../assets/img/community support.png';
 
 import connectingTeams from '../assets/img/undraw_connecting_teams_re_hno7.svg';
-import knowledge from '../assets/img/undraw_knowledge_re_5v9l.svg';
 import googleDocs from '../assets/img/undraw_google_docs_re_evm3.svg';
+import knowledge from '../assets/img/undraw_knowledge_re_5v9l.svg';
+import lodash from 'lodash';
 
 export default function OriginalHome() {
   const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+
+  const service = searchParams.get('service');
 
   return (
     <>
       <section className='section section-lg section-safe'>
         <Container className='landing-container'>
-          <h1 className='landing-heading'>AI Driven Prospecting</h1>
+          <h1 className='landing-heading'>
+            {service ? lodash.startCase(service) : `AI Driven Prospecting`}
+          </h1>
           <h2 className='landing-tagline'>
             Find Professional and Personal Prospects, Opportunities
           </h2>
           {/* descripiton */}
-          <h3 className='landing-description'>
+          <h3 className='landing-description font-weight-light'>
             Embark on your next adventure with the ideal match. Together, we
             build lasting relationships, whether for a career, mentoring, or
             partnering. Find your perfect connection with us
@@ -32,7 +44,12 @@ export default function OriginalHome() {
           <Button
             className='btn-round btn-lg landing-button'
             color='primary'
-            onClick={() => navigate('/register')}
+            onClick={() =>
+              navigate({
+                pathname: '/register',
+                search: service ? `?service=${service}` : '',
+              })
+            }
           >
             Get Started <i className='tim-icons icon-minimal-right' />
           </Button>

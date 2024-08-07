@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Button,
   Collapse,
@@ -18,16 +19,50 @@ export default function LandingNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
 
+  const [, setSerachParams] = useSearchParams();
+
+  function setService(service) {
+    setSerachParams((prev) => ({
+      ...Object.fromEntries(prev),
+      service,
+    }));
+  }
+
+  function removeService() {
+    setSerachParams((prev) => {
+      const { service, ...rest } = Object.fromEntries(prev);
+      return rest;
+    });
+  }
+
+  const navigate = useNavigate();
+
   return (
     <Navbar color='transparent' container expand='md'>
-      <NavbarBrand>UNIEDGE</NavbarBrand>
+      <NavbarBrand
+        onClick={(e) => {
+          e.preventDefault();
+          removeService();
+          navigate('/');
+        }}
+      >
+        UniEdge
+      </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       {/* links */}
       {/* To the right have 5 buttons (Home, About Us, Services, Resources, Signup/Login), Sign-up/Login should be highlighted */}
       <Collapse navbar>
         <Nav navbar className='ml-auto align-items-center'>
           <NavItem>
-            <NavLink href='#'>Home</NavLink>
+            <NavLink
+              onClick={(e) => {
+                e.preventDefault();
+                removeService();
+                navigate('/');
+              }}
+            >
+              Home
+            </NavLink>
           </NavItem>
           <NavItem>
             <NavLink href='#'>About Us</NavLink>
@@ -38,11 +73,23 @@ export default function LandingNavbar() {
             </DropdownToggle>
             <DropdownMenu>
               {/*  (Professional Prospects, Personal Prospects, Mentoring, Life Coaching, Volunteering) */}
-              <DropdownItem>Professional Prospects</DropdownItem>
-              <DropdownItem>Personal Prospects</DropdownItem>
-              <DropdownItem>Mentoring</DropdownItem>
-              <DropdownItem>Life Coaching</DropdownItem>
-              <DropdownItem>Volunteering</DropdownItem>
+              <DropdownItem
+                onClick={() => setService('professional-prospects')}
+              >
+                Professional Prospects
+              </DropdownItem>
+              <DropdownItem onClick={() => setService('personal-prospects')}>
+                Personal Prospects
+              </DropdownItem>
+              <DropdownItem onClick={() => setService('mentoring')}>
+                Mentoring
+              </DropdownItem>
+              <DropdownItem onClick={() => setService('life-coaching')}>
+                Life Coaching
+              </DropdownItem>
+              <DropdownItem onClick={() => setService('volunteering')}>
+                Volunteering
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
           <NavItem>
