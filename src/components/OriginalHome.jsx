@@ -58,9 +58,7 @@ export default function OriginalHome() {
 
       <section className='section section-lg'>
         {/* benefits heading in center */}
-        <h1 className='h1 font-weight-bold text-center text-white'>
-          Our Benefits
-        </h1>
+        <h1 className='h1 font-weight-bold text-center'>Our Benefits</h1>
 
         <Row className='px-4'>
           {[
@@ -120,8 +118,8 @@ export default function OriginalHome() {
                 <Col md='4'>
                   <Card className='card-plain'>
                     <CardBody>
-                      <CardTitle tag='h2' className='text-bold title'>
-                        LINK UP VOLUNTEERING
+                      <CardTitle tag='h2' className='font-weight-bold'>
+                        Link Up Volunteering
                       </CardTitle>
                       <CardText>
                         Connects students with organizations to unlock volunteer
@@ -143,8 +141,8 @@ export default function OriginalHome() {
                 <Col md='4'>
                   <Card className='card-plain'>
                     <CardBody>
-                      <CardTitle tag='h2' className='text-bold title'>
-                        UNIEDGE
+                      <CardTitle tag='h2' className='font-weight-bold'>
+                        UniEdge
                       </CardTitle>
                       <CardText>
                         Engage with top recruiters and explore exciting
@@ -166,8 +164,8 @@ export default function OriginalHome() {
                 <Col md='4'>
                   <Card className='card-plain'>
                     <CardBody>
-                      <CardTitle tag='h2' className='text-bold title'>
-                        MENTORING
+                      <CardTitle tag='h2' className='font-weight-bold'>
+                        Mentoring
                       </CardTitle>
                       <CardText>
                         Discover the ideal investors and mentors to propel your
