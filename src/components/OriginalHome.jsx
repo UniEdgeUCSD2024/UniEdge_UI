@@ -15,7 +15,34 @@ import Footer from './Footer/Footer';
 import connectingTeams from '../assets/img/undraw_connecting_teams_re_hno7.svg';
 import googleDocs from '../assets/img/undraw_google_docs_re_evm3.svg';
 import knowledge from '../assets/img/undraw_knowledge_re_5v9l.svg';
-import lodash from 'lodash';
+
+const SERVICES = [
+  {
+    key: 'ai-driven-prospecting',
+    title: 'AI Driven Prospecting',
+    subtitle: 'Find Professional and Personal Prospects, Opportunities',
+    description:
+      'Embark on your next adventure with the ideal match. Together, we build lasting connections, whether for a career, mentoring, or partnering. Find your perfect connection with us, enabling advanced cognition for precision and success.',
+  },
+  {
+    key: 'professional-prospects',
+    title: 'Unlock Your Professional Potential',
+    subtitle: 'Discover Career-Enhancing Connections and Opportunities',
+    description:
+      'Empower your career journey with our AI-driven platform, bridging talent with opportunities and driving success in careers and recruitment. Achieve your goals with precision-matched connections.',
+  },
+  {
+    key: 'mentoring',
+    title: 'Transform Your Mentoring Journey',
+    subtitle: 'Discover Life-Changing Mentorship Connections',
+    description:
+      'Our platform empowers mentees and mentors, providing an optimal matchmaking experience connecting mentors and mentees to foster growth and success. Discover individuals who align with your expertise and guidance.',
+  },
+];
+
+function getData(service) {
+  return SERVICES.find((s) => s.key === service) || SERVICES[0];
+}
 
 export default function OriginalHome() {
   const navigate = useNavigate();
@@ -28,17 +55,11 @@ export default function OriginalHome() {
     <>
       <section className='section section-lg section-safe'>
         <Container className='landing-container'>
-          <h1 className='landing-heading'>
-            {service ? lodash.startCase(service) : `AI Driven Prospecting`}
-          </h1>
-          <h2 className='landing-tagline'>
-            Find Professional and Personal Prospects, Opportunities
-          </h2>
+          <h1 className='landing-heading'>{getData(service).title}</h1>
+          <h2 className='landing-tagline'>{getData(service).subtitle}</h2>
           {/* descripiton */}
           <h3 className='landing-description font-weight-light'>
-            Embark on your next adventure with the ideal match. Together, we
-            build lasting relationships, whether for a career, mentoring, or
-            partnering. Find your perfect connection with us
+            {getData(service).description}
           </h3>
           {/* get started */}
           <Button
