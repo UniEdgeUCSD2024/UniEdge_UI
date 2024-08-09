@@ -15,6 +15,7 @@ import Footer from './Footer/Footer';
 import connectingTeams from '../assets/img/undraw_connecting_teams_re_hno7.svg';
 import googleDocs from '../assets/img/undraw_google_docs_re_evm3.svg';
 import knowledge from '../assets/img/undraw_knowledge_re_5v9l.svg';
+import { startCase } from 'lodash';
 
 const SERVICES = [
   {
@@ -41,7 +42,12 @@ const SERVICES = [
 ];
 
 function getData(service) {
-  return SERVICES.find((s) => s.key === service) || SERVICES[0];
+  return (
+    SERVICES.find((s) => s.key === service) || {
+      ...SERVICES[0],
+      title: startCase(service) || SERVICES[0].title,
+    }
+  );
 }
 
 export default function OriginalHome() {
