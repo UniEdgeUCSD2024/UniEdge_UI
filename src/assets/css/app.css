@@ -11,6 +11,7 @@
   text-align: center;
   /* text-transform: uppercase; */
   margin-bottom: 4rem;
+  color: white;
 }
 
 .landing-tagline {
@@ -36,4 +37,9 @@
 
 .btn-primary {
   color: var(--primary-contrast);
+}
+
+.cardContainer {
+  border-radius: 36px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

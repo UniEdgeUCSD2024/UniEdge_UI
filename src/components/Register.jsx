@@ -120,97 +120,67 @@ export default function UserSignup() {
             <div className='content'>
               <Container>
                 <Row>
-                  <Col className='offset-lg-0 offset-md-3' lg='5' md='6'>
-                    <Card className='card-register'>
-                      <CardHeader>
-                        <CardImg
-                          alt='...'
-                          src={require('../assets/img/square-gold.png')}
-                        />
-                        <CardTitle tag='h3'>Register</CardTitle>
-                      </CardHeader>
-                      <CardBody>
-                        {error && (
-                          <Alert
-                            variant='danger'
-                            style={{ backgroundColor: 'red' }}
-                          >
-                            {error}
-                          </Alert>
-                        )}
-                        <Form className='form' onSubmit={handleSubmit}>
-                          <Input
-                            innerRef={emailRef}
-                            placeholder='Email'
-                            type='text'
-                          />
-                          <Input
-                            style={{ marginTop: '1rem' }}
-                            innerRef={userNameRef}
-                            placeholder='User Name'
-                            type='text'
-                          />
-                          <Input
-                            style={{ marginTop: '1rem' }}
-                            innerRef={passwordRef}
-                            placeholder='Password'
-                            type='password'
-                          />
-                          <Input
-                            style={{ marginTop: '1rem' }}
-                            innerRef={passwordConfirmRef}
-                            placeholder='Confirm Password'
-                            type='password'
-                          />
+                  <Col className='offset-lg-0 offset-md-3 g-3' lg='5' md='6'>
+                    <h1 className=' font-weight-bold h1'>Register</h1>
 
-                          {/* service select - with options: professional-prospects, personal-prospects,mentoring,life-coaching,volunteering */}
-                          <Input
-                            type='select'
-                            name='service'
-                            style={{ marginTop: '1rem' }}
-                            value={selectedService}
-                            onChange={(e) => setSelectedService(e.target.value)}
-                          >
-                            <option value='default'>Default</option>
-                            {[
-                              'professional-prospects',
-                              'personal-prospects',
-                              'mentoring',
-                              'life-coaching',
-                              'volunteering',
-                            ].map((service) => (
-                              <option key={service} value={service}>
-                                {startCase(service)}
-                              </option>
-                            ))}
-                          </Input>
-                          <FormGroup check className='text-left'>
-                            <Label check>
-                              <Input type='checkbox' />
-                              <span className='form-check-sign' />I agree to the{' '}
-                              <a
-                                href='#pablo'
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                terms and conditions
-                              </a>
-                              .
-                            </Label>
-                          </FormGroup>
-                        </Form>
-                      </CardBody>
-                      <CardFooter>
-                        <Button
-                          disabled={loading}
-                          className='btn-round'
-                          color='info'
-                          size='lg'
-                          onClick={handleSubmit}
-                        >
-                          Sign Up
-                        </Button>
-                      </CardFooter>
-                    </Card>
+                    {error && (
+                      <Alert
+                        variant='danger'
+                        style={{ backgroundColor: 'red' }}
+                      >
+                        {error}
+                      </Alert>
+                    )}
+                    <Form className='form' onSubmit={handleSubmit}>
+                      <Input
+                        innerRef={emailRef}
+                        placeholder='Email'
+                        type='text'
+                      />
+                      <Input
+                        style={{ marginTop: '1rem' }}
+                        innerRef={userNameRef}
+                        placeholder='User Name'
+                        type='text'
+                      />
+                      <Input
+                        style={{ marginTop: '1rem' }}
+                        innerRef={passwordRef}
+                        placeholder='Password'
+                        type='password'
+                      />
+                      <Input
+                        style={{ marginTop: '1rem' }}
+                        innerRef={passwordConfirmRef}
+                        placeholder='Confirm Password'
+                        type='password'
+                      />
+
+                      {/* service select - with options: professional-prospects, personal-prospects,mentoring,life-coaching,volunteering */}
+
+                      <FormGroup check className='text-left'>
+                        <Label check>
+                          <Input type='checkbox' />
+                          <span className='form-check-sign' />
+                          <span className='text-black'>I agree to the </span>
+                          <a href='#pablo' onClick={(e) => e.preventDefault()}>
+                            terms and conditions
+                          </a>
+                          .
+                        </Label>
+                      </FormGroup>
+                    </Form>
+
+                    <Button
+                      disabled={loading}
+                      className='btn-round'
+                      color='info'
+                      size='lg'
+                      onClick={handleSubmit}
+                    >
+                      Sign Up
+                    </Button>
+
                     <div className='text-center'>
                       Already have an account? <Link to='/login'>Log In</Link>
                     </div>

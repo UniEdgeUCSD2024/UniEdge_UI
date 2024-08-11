@@ -53,7 +53,7 @@ export default function LandingNavbar() {
       {/* To the right have 5 buttons (Home, About Us, Services, Resources, Signup/Login), Sign-up/Login should be highlighted */}
       <Collapse navbar>
         <Nav navbar className='ml-auto align-items-center'>
-          <NavItem>
+          {/* <NavItem>
             <NavLink
               onClick={(e) => {
                 e.preventDefault();
@@ -63,10 +63,10 @@ export default function LandingNavbar() {
             >
               Home
             </NavLink>
-          </NavItem>
-          <NavItem>
+          </NavItem> */}
+          {/* <NavItem>
             <NavLink href='#'>About Us</NavLink>
-          </NavItem>
+          </NavItem> */}
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
               Services
@@ -92,9 +92,9 @@ export default function LandingNavbar() {
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
-          <NavItem>
+          {/* <NavItem>
             <NavLink href='#'>Resources</NavLink>
-          </NavItem>
+          </NavItem> */}
           <NavItem>
             <NavLink href='#/login'>
               <Button color='primary'>Login</Button>
