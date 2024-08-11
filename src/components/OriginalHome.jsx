@@ -167,29 +167,29 @@ export default function OriginalHome() {
                 Our Services
               </h1>
 
-              <div className='d-flex justify-content-around  flex-column flex-md-row'>
+              <div className='d-flex justify-content-around flex-column flex-md-row'>
                 {[
                   {
-                    title: 'Link Up Volunteering',
+                    title: 'Professional Prospects',
                     description:
-                      'Connects students with organizations to unlock volunteer opportunities. Enhance skills and networks while organizations gain fresh, energetic contributions, strengthening communities and fostering future leaders.',
-                    link: '/volunteer',
+                      "Engage with top recruiters and explore exciting opportunities. Whether you're a recent graduate or a seasoned professional, we connect you with companies that value your skills and aspirations.",
+                    link: '/professional-prospects',
                   },
                   {
-                    title: 'UniEdge',
-                    description:
-                      "Engage with top recruiters and explore exciting opportunities. Whether a recent graduate or seasoned professional, we'll connect you with companies that value your skills and aspirations.",
-                    link: '/uniedge',
-                  },
-                  {
-                    title: 'Mentoring',
+                    title: 'MENTORING',
                     description:
                       "Discover the ideal investors and mentors to propel your organization's success. Our platform connects organizations with industry experts who share your vision and can help you realize the full potential of your ideas.",
-                    link: '/mentoringlanding',
+                    link: '/mentoring',
+                  },
+                  {
+                    title: 'Volunteering',
+                    description:
+                      'Connects students with organizations to unlock volunteer opportunities. Enhance skills and networks while organizations gain fresh, energetic contributions, strengthening communities and fostering future leaders.',
+                    link: '/volunteering',
                   },
                 ].map((service) => (
                   <div key={service.title} className='h-100 px-4 w-fit'>
-                    <Card className='cardContainer bg-black text-white p-3'>
+                    <Card className='cardContainer bg-black text-white p-3 h-full'>
                       <CardBody>
                         <CardTitle
                           tag='h2'
