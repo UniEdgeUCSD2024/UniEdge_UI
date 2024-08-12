@@ -1,26 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.5f6709c0.chunk.css",
-    "main.js": "/static/js/main.bc056b3d.chunk.js",
-    "main.js.map": "/static/js/main.bc056b3d.chunk.js.map",
+    "main.css": "/static/css/main.95edb324.chunk.css",
+    "main.js": "/static/js/main.883ef50d.chunk.js",
+    "main.js.map": "/static/js/main.883ef50d.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
     "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
     "static/css/2.cc82f8aa.chunk.css": "/static/css/2.cc82f8aa.chunk.css",
-    "static/js/2.22ecfe6a.chunk.js": "/static/js/2.22ecfe6a.chunk.js",
-    "static/js/2.22ecfe6a.chunk.js.map": "/static/js/2.22ecfe6a.chunk.js.map",
+    "static/js/2.53937d43.chunk.js": "/static/js/2.53937d43.chunk.js",
+    "static/js/2.53937d43.chunk.js.map": "/static/js/2.53937d43.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.9e7c427fd3dc1f082f91372024d322ce.js": "/precache-manifest.9e7c427fd3dc1f082f91372024d322ce.js",
+    "precache-manifest.c4c616243051febded8487c1215f26a1.js": "/precache-manifest.c4c616243051febded8487c1215f26a1.js",
     "service-worker.js": "/service-worker.js",
     "static/css/2.cc82f8aa.chunk.css.map": "/static/css/2.cc82f8aa.chunk.css.map",
-    "static/css/main.5f6709c0.chunk.css.map": "/static/css/main.5f6709c0.chunk.css.map",
+    "static/css/main.95edb324.chunk.css.map": "/static/css/main.95edb324.chunk.css.map",
     "static/media/Comprehensive Resources.png": "/static/media/Comprehensive Resources.1ea588bc.png",
     "static/media/Personalized Matching.png": "/static/media/Personalized Matching.f6ac2192.png",
     "static/media/community support.png": "/static/media/community support.bda16b3a.png",
     "static/media/blk-design-system-react.css": "/static/media/dots.b81dabc0.png",
     "static/media/nucleo-icons.css": "/static/media/nucleo.f0b489a5.woff",
-    "static/media/square-gold.png": "/static/media/square-gold.6566361f.png",
-    "static/media/undraw_connecting_teams_re_hno7.svg": "/static/media/undraw_connecting_teams_re_hno7.5d2428ab.svg",
-    "static/media/undraw_google_docs_re_evm3.svg": "/static/media/undraw_google_docs_re_evm3.599383bf.svg",
-    "static/media/undraw_knowledge_re_5v9l.svg": "/static/media/undraw_knowledge_re_5v9l.129dcceb.svg"
+    "static/media/square-gold.png": "/static/media/square-gold.6566361f.png"
   }
 }
