@@ -67,7 +67,7 @@ export default function UserSignup() {
           console.error('Error:', error);
         });
 
-      history('/recruiter');
+      history('/student');
     } catch (error) {
       console.error(error);
       let errorMessage = '';
