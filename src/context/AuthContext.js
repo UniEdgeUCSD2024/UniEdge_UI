@@ -1,29 +1,30 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { auth, database } from '../auth/firebaseAuthSDK'
-import { set, ref, onValue } from 'firebase/database';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { onValue, ref, set } from 'firebase/database';
+import React, { useContext, useEffect, useState } from 'react';
+import { auth, database } from '../auth/firebaseAuthSDK';
 
-export const AuthContext = React.createContext()
+export const AuthContext = React.createContext();
 
 export function useAuth() {
-  return useContext(AuthContext)
+  return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState()
-  const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
   const [userKeys, setUserKeys] = useState(null);
 
-  async function signup(email, username, password, role) {
+  async function signup(email, password) {
     const response = await auth.createUserWithEmailAndPassword(email, password);
+    console.log('response', response);
     const userId = response.user.uid;
-      set(ref(database, 'users/'+userId), {
-        email: email,
-        role: role,
-        username: username
-      })  
+    await set(ref(database, 'users/' + userId), {
+      email: email,
+    });
+    console.log('user created');
     const token = await response.user.getIdToken();
     localStorage.setItem('token', token);
+    console.log({ token });
     return;
   }
 
@@ -38,7 +39,7 @@ export function AuthProvider({ children }) {
   }
 
   async function fetchKeys(userId) {
-    const dbRef = ref(database, 'users/'+userId);
+    const dbRef = ref(database, 'users/' + userId);
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       setUserKeys(data);
@@ -47,19 +48,19 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    return auth.signOut()
+    return auth.signOut();
   }
 
   function resetPassword(email) {
-    return auth.sendPasswordResetEmail(email)
+    return auth.sendPasswordResetEmail(email);
   }
 
   function updateEmail(email) {
-    return currentUser.updateEmail(email)
+    return currentUser.updateEmail(email);
   }
 
   function updatePassword(password) {
-    return currentUser.updatePassword(password)
+    return currentUser.updatePassword(password);
   }
 
   function resetPassword(email) {
@@ -67,14 +68,14 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setCurrentUser(user)
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
       fetchKeys(user?.uid);
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
-    return unsubscribe
-  }, [])
+    return unsubscribe;
+  }, []);
 
   const value = {
     currentUser,
@@ -84,12 +85,12 @@ export function AuthProvider({ children }) {
     logout,
     resetPassword,
     updateEmail,
-    updatePassword
-  }
+    updatePassword,
+  };
 
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
-  )
+  );
 }

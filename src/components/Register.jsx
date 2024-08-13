@@ -1,35 +1,27 @@
 import React, { useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Form,
-  Button,
-  Card,
   Alert,
-  Container,
-  Row,
+  Button,
   Col,
+  Container,
+  Form,
+  FormGroup,
   Input,
   Label,
-  CardHeader,
-  CardImg,
-  CardBody,
-  CardTitle,
-  FormGroup,
-  CardFooter,
+  Row,
 } from 'reactstrap';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { startCase } from 'lodash';
 
 export default function UserSignup() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const userNameRef = useRef();
+
   const { signup, currentUser } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const history = useNavigate();
-  const token = localStorage.getItem('token');
 
   const [searchParams] = useSearchParams();
   const [selectedService, setSelectedService] = useState(
@@ -39,7 +31,6 @@ export default function UserSignup() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const role = document.querySelector('input[name="role"]:checked')?.value;
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError('Passwords do not match');
     }
@@ -47,24 +38,21 @@ export default function UserSignup() {
     try {
       setError('');
       setLoading(true);
-      await signup(
-        emailRef.current.value,
-        userNameRef.current.value,
-        passwordRef.current.value,
-        role
-      );
+      await signup(emailRef.current.value, passwordRef.current.value);
       const user_reg = {
         email: emailRef.current.value,
-        role: role,
-        username: userNameRef.current.value,
         service: selectedService,
+        password: passwordRef.current.value,
       };
-      const apiUrl = 'https://uniedge-functions.azurewebsites.net/createuser';
+      const apiUrl =
+        'https://uniedge-prospect-functions.azurewebsites.net/createuser';
+
+      console.log('done');
       fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(user_reg),
       })
@@ -79,12 +67,9 @@ export default function UserSignup() {
           console.error('Error:', error);
         });
 
-      if (role == 'Student') {
-        history('/student');
-      } else {
-        history('/recruiter');
-      }
+      history('/recruiter');
     } catch (error) {
+      console.error(error);
       let errorMessage = '';
       if (error.code) {
         switch (error.code) {
@@ -137,12 +122,7 @@ export default function UserSignup() {
                         placeholder='Email'
                         type='text'
                       />
-                      <Input
-                        style={{ marginTop: '1rem' }}
-                        innerRef={userNameRef}
-                        placeholder='User Name'
-                        type='text'
-                      />
+
                       <Input
                         style={{ marginTop: '1rem' }}
                         innerRef={passwordRef}
