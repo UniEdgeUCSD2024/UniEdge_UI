@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Form,
   Button,
@@ -26,18 +26,13 @@ export default function Login() {
   const history = useNavigate();
   const { userKeys } = useContext(AuthContext);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    try {
-      setError('');
-      setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
+  useEffect(() => {
+    async function checkUser() {
+      console.log('userKeys', userKeys);
       const token = localStorage.getItem('token');
-      if (userKeys && userKeys.role) {
-        if (userKeys.role === 'Student') {
+      if (userKeys) {
+        if (userKeys) {
           history('/home');
-        } else {
-          history('/RecruiterHomePage');
         }
         const response = await fetch(
           'https://uniedge-functions.azurewebsites.net/checkuser',
@@ -57,9 +52,18 @@ export default function Login() {
         if (login_state) {
           updateLoginState(login_state);
         }
-      } else {
-        setError('User keys not found or invalid');
       }
+    }
+
+    checkUser();
+  }, [userKeys]);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      setError('');
+      setLoading(true);
+      await login(emailRef.current.value, passwordRef.current.value);
     } catch (error) {
       console.error(error);
       setError('Failed to log in');

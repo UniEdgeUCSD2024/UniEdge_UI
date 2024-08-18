@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Navbar,
   Nav,
@@ -8,6 +8,7 @@ import {
   Col,
   Card,
 } from 'react-bootstrap';
+import { AuthContext } from '../../context/AuthContext';
 
 const Jobs = () => {
   const cardData = [
@@ -48,6 +49,8 @@ const Jobs = () => {
       link: '/#/mentorship',
     },
   ];
+
+  const { logout } = useContext(AuthContext);
   return (
     <Container>
       {/* navbar */}
@@ -74,7 +77,7 @@ const Jobs = () => {
           variant='outline-danger'
           className='ml-2'
           onClick={() => {
-            window.localStorage.clear();
+            logout();
             window.location.href = '/#/login';
           }}
         >

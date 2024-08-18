@@ -40,14 +40,20 @@ export function AuthProvider({ children }) {
 
   async function fetchKeys(userId) {
     const dbRef = ref(database, 'users/' + userId);
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      setUserKeys(data);
+    return new Promise((resolve, reject) => {
+      onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        setUserKeys(data);
+        resolve(data);
+      });
     });
     return;
   }
 
   function logout() {
+    setUserKeys(null);
+    setCurrentUser(null);
+    localStorage.removeItem('token');
     return auth.signOut();
   }
 
