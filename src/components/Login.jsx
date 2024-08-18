@@ -35,7 +35,7 @@ export default function Login() {
       const token = localStorage.getItem('token');
       if (userKeys && userKeys.role) {
         if (userKeys.role === 'Student') {
-          history('/student');
+          history('/home');
         } else {
           history('/RecruiterHomePage');
         }

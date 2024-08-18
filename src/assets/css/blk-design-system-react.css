@@ -94,8 +94,6 @@ html {
   margin-top: 3rem;
 }
 
-
-
 article,
 aside,
 figcaption,
@@ -11912,7 +11910,7 @@ a.text-darker:focus {
 
   transition: all 0.15s ease;
   box-shadow: none;
-  color: var(--color);
+  color: var(--primary-contrast);
 }
 .btn.animation-on-hover:hover,
 .navbar .navbar-nav > a.btn.animation-on-hover:hover {
@@ -23074,9 +23072,9 @@ input.datetimepicker[data-color='yellow']
 }
 .card .card-body .card-title {
   color: var(--color);
-  text-transform: inherit;
-  font-weight: 300;
   margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 1.25rem;
 }
 .card .card-body .card-description,
 .card .card-body .card-category {
@@ -23092,7 +23090,6 @@ input.datetimepicker[data-color='yellow']
 }
 .card .card-header .card-title {
   color: var(--color);
-  font-weight: 100;
 }
 .card .card-header .card-category {
   color: #9a9a9a;
@@ -23191,7 +23188,6 @@ input.datetimepicker[data-color='yellow']
   overflow: hidden;
 }
 .card-chart .card-header .card-title i {
-  font-size: 16px;
   margin-right: 5px;
   margin-bottom: 3px;
 }
@@ -23480,7 +23476,6 @@ input.datetimepicker[data-color='yellow']
 }
 .card-register .card-header .card-title {
   position: relative;
-  font-size: 5em;
   font-weight: 900;
   color: #d8d8d8;
   /* text-transform: lowercase; */
@@ -23572,7 +23567,6 @@ input.datetimepicker[data-color='yellow']
   overflow: hidden;
 }
 .card-chart .card-header .card-title i {
-  font-size: 16px;
   margin-right: 5px;
   margin-bottom: 3px;
 }
