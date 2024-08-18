@@ -1,20 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-  Form,
-  Button,
-  Card,
-  Alert,
-  Container,
-  Row,
-  Col,
-  Input,
-  CardHeader,
-  CardImg,
-  CardBody,
-  CardTitle,
-  CardFooter,
-} from 'reactstrap';
-import { useAuth, AuthContext } from '../context/AuthContext';
+import React, { useRef, useState } from 'react';
+import { Form, Button, Alert, Container, Row, Col, Input } from 'reactstrap';
+import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
@@ -24,39 +10,6 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const history = useNavigate();
-  const { userKeys } = useContext(AuthContext);
-
-  useEffect(() => {
-    async function checkUser() {
-      console.log('userKeys', userKeys);
-      const token = localStorage.getItem('token');
-      if (userKeys) {
-        if (userKeys) {
-          history('/home');
-        }
-        const response = await fetch(
-          'https://uniedge-functions.azurewebsites.net/checkuser',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              email: userKeys.email,
-              role: userKeys.role,
-            }),
-          }
-        );
-        const login_state = await response.json();
-        if (login_state) {
-          updateLoginState(login_state);
-        }
-      }
-    }
-
-    checkUser();
-  }, [userKeys]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -64,16 +17,35 @@ export default function Login() {
       setError('');
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(
+        'https://uniedge-prospect-functions.azurewebsites.net/checkuser',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: emailRef.current.value,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const loginState = await response.json();
+        localStorage.setItem('login_state', JSON.stringify(loginState));
+        history('/home');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to log in');
+      }
     } catch (error) {
       console.error(error);
       setError('Failed to log in');
     }
     setLoading(false);
-  }
-
-  function updateLoginState(loginState) {
-    window.localStorage.setItem('login_state', JSON.stringify(loginState));
-    window.dispatchEvent(new Event('loginStateUpdated'));
   }
 
   return (
