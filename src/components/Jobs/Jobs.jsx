@@ -55,7 +55,7 @@ const Jobs = () => {
     <Container>
       {/* navbar */}
       <Navbar bg='white' expand='lg'>
-        <Navbar.Brand href='#home'>UniEdge</Navbar.Brand>
+        <Navbar.Brand href='#/home'>UniEdge</Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='ml-auto'>
