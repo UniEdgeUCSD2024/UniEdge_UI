@@ -1,300 +1,454 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
-import { Spinner } from 'reactstrap';
-import Footer from "../Footer/Footer";
-import { Link, useNavigate } from "react-router-dom";
-import { AuthContext, useAuth } from "../../context/AuthContext";
+import React, { useContext, useState } from 'react';
 import {
-    Form,
-    Button,
-    Card,
-    Alert,
-    Container,
-    Row,
-    Col,
-    Input,
-    Label,
-    CardHeader,
-    CardImg,
-    CardBody,
-    CardTitle,
-    FormGroup,
-    CardFooter,
-} from "reactstrap";
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  InputGroup,
+  Spinner,
+  Card,
+} from 'react-bootstrap';
+import { FaMinus } from 'react-icons/fa';
+import { AuthContext } from '../../context/AuthContext';
+import { useParams } from 'react-router-dom';
+import { capitalize } from 'lodash';
+const ProfileForm = () => {
+  const [linkedInUrl, setLinkedInUrl] = useState('');
+  const { userKeys } = useContext(AuthContext);
+  const parameters = useParams();
 
-export default function StudentProfile() {
-    const navigate = useNavigate();
-    const { userKeys } = useContext(AuthContext);
-    const FirstNameRef = useRef();
-    const LastNameRef = useRef();
-    const MobileNumberRef = useRef();
-    const GPARef = useRef();
-    var [loginState, setLoginState] = useState({});
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [experiences, setExperiences] = useState([]);
-    const [resume, setResume] = useState(null);
-    const [resumeName, setResumeName] = useState("");
-    const [isLoginStateChecked, setIsLoginStateChecked] = useState(false);
-    const [updating, setUpdating] = useState(false);
-    const [updateMessage, setUpdateMessage] = useState("");
-    const [editButtonFlag, setEditButtonFlag] = useState(false);
-    const [userInfo,setUserInfo] = useState({});
+  const serviceName = capitalize(parameters.service);
+  const role = capitalize(parameters.role);
 
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    experience: [],
+    education: [],
+    headline: '',
+  });
+  const [resume, setResume] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const checkLoginState = () => {
-            loginState = JSON.parse(window.localStorage.getItem('login_state'));
-            if (loginState) {
-                setIsLoginStateChecked(true);
-                if (!loginState.profile) {
-                    let prefilled_userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
-                    setEditButtonFlag(true);
-                    if(prefilled_userInfo){
-                        setUserInfo(prefilled_userInfo);
-                        let experiencesArray = Array.isArray(prefilled_userInfo.experiences) ? prefilled_userInfo.experiences : [];
-                        setExperiences([...experiencesArray]);
-                    }
+  const handleLinkedInUrlChange = (e) => setLinkedInUrl(e.target.value);
+
+  const handleUploadLinkedInProfile = async () => {
+    if (!linkedInUrl) return;
+    setLoading(true);
+
+    try {
+      const loginState = JSON.parse(localStorage.getItem('login_state'));
+      console.log('loginState:', loginState);
+      const response = await fetch(
+        'https://uniedge-prospect-functions.azurewebsites.net/linkedinprofile',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: loginState.id,
+            linkedin_profile_url: linkedInUrl,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.profile) {
+        setProfile({
+          firstName: data.profile.firstName || '',
+          lastName: data.profile.lastName || '',
+          experience: data.profile.experience || [],
+          education: data.profile.education || [],
+          headline: data.profile.headline || '',
+        });
+      }
+    } catch (error) {
+      console.error('Error uploading LinkedIn profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e, section, index, field) => {
+    const updatedSection = [...profile[section]];
+    updatedSection[index][field] = e.target.value;
+    setProfile({ ...profile, [section]: updatedSection });
+  };
+
+  const handleAddField = (section) => {
+    const newField =
+      section === 'experience'
+        ? {
+            title: '',
+            companyName: '',
+            startDate: '',
+            endDate: '',
+            description: '',
+          }
+        : {
+            degreeName: '',
+            fieldOfStudy: '',
+            schoolName: '',
+            startDate: '',
+            endDate: '',
+          };
+    setProfile({ ...profile, [section]: [...profile[section], newField] });
+  };
+
+  const handleRemoveField = (section, index) => {
+    const updatedSection = profile[section].filter((_, i) => i !== index);
+    setProfile({ ...profile, [section]: updatedSection });
+  };
+
+  const handleResumeUpload = (e) => setResume(e.target.files[0]);
+
+  const handleSubmitProfile = async () => {
+    const { firstName, lastName, experience, education, headline } = profile;
+
+    if (!firstName || !lastName) {
+      alert('Please fill in the first name and last name fields.');
+      return;
+    }
+
+    const profileDetails = {
+      LastName: lastName,
+      FirstName: firstName,
+      Headline: headline,
+      Experience: experience.map((exp) => ({
+        Title: exp.title,
+        Company: exp.companyName,
+        StartDate: exp.startDate,
+        EndDate: exp.endDate,
+        Description: exp.description,
+      })),
+      Education: education.map((edu) => ({
+        Degree: edu.degreeName,
+        FieldOfStudy: edu.fieldOfStudy,
+        University: edu.schoolName,
+        StartDate: edu.startDate,
+        EndDate: edu.endDate,
+      })),
+    };
+
+    const loginState = JSON.parse(localStorage.getItem('login_state'));
+    const token = localStorage.getItem('token');
+
+    if (resume) {
+      const formData = new FormData();
+      formData.append('file', resume);
+
+      formData.append(
+        'userInfo',
+        JSON.stringify({
+          Id: loginState.id,
+          Service: serviceName,
+          Role: role,
+          Email: userKeys.email,
+          Profile: {},
+          Profile_details: profileDetails,
+        })
+      );
+
+      try {
+        const response = await fetch(
+          'https://uniedge-prospect-functions.azurewebsites.net/adduser',
+          {
+            method: 'POST',
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+        console.log('Response:', data);
+      } catch (error) {
+        console.error('Error submitting profile with resume:', error);
+      }
+    } else {
+      // resume not attached;
+      try {
+        const response = await fetch(
+          'https://uniedge-prospect-functions.azurewebsites.net/adduser',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              Id: loginState.id,
+              Service: serviceName,
+              Role: role,
+              Email: userKeys.email,
+              Profile: {},
+              Profile_details: profileDetails,
+            }),
+          }
+        );
+
+        const data = await response.json();
+        console.log('Response:', data);
+      } catch (error) {
+        console.error('Error submitting profile:', error);
+      }
+    }
+  };
+
+  return (
+    <Container className='py-5 mt-5'>
+      <Row>
+        <Col xs={12} md={6}>
+          <h4>Upload Your LinkedIn Profile</h4>
+          <InputGroup className='mb-3'>
+            <Form.Control
+              placeholder='LinkedIn Profile URL'
+              value={linkedInUrl}
+              onChange={handleLinkedInUrlChange}
+            />
+            <Button
+              variant='primary'
+              onClick={handleUploadLinkedInProfile}
+              disabled={loading}
+            >
+              {loading ? <Spinner animation='border' size='sm' /> : 'Upload'}
+            </Button>
+          </InputGroup>
+          <h4>Upload Your Resume/CV</h4>
+          <Form.Group controlId='formFile'>
+            <Form.Control type='file' onChange={handleResumeUpload} />
+          </Form.Group>
+        </Col>
+        <Col xs={12} md={6}>
+          <h4>Profile Information</h4>
+
+          <Form className='mt-3 mb-5'>
+            <Form.Group controlId='formFirstName'>
+              <Form.Label>First Name</Form.Label>
+              <Form.Control
+                type='text'
+                value={profile.firstName}
+                onChange={(e) =>
+                  setProfile({ ...profile, firstName: e.target.value })
                 }
-            } else {
-                setIsLoginStateChecked(false);
-            }
-        };
-        window.addEventListener('storage', checkLoginState);
-        checkLoginState();
-        return () => {
-            window.removeEventListener('storage', checkLoginState);
-        };
-    }, []);
+              />
+            </Form.Group>
+            <Form.Group controlId='formLastName'>
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control
+                type='text'
+                value={profile.lastName}
+                onChange={(e) =>
+                  setProfile({ ...profile, lastName: e.target.value })
+                }
+              />
+            </Form.Group>
 
-    if (!isLoginStateChecked) {
-        return (
-            <div class="loader-container">
-                <Spinner style={{ width: '3rem', height: '3rem' }} />
-                <p>Checking login status...</p>
+            <Form.Group controlId='formHeadline'>
+              <Form.Label>Headline</Form.Label>
+              <Form.Control
+                type='text'
+                value={profile.headline}
+                onChange={(e) =>
+                  setProfile({ ...profile, headline: e.target.value })
+                }
+              />
+            </Form.Group>
+
+            <h5 className='mt-4'>Experience</h5>
+            {profile.experience.map((exp, index) => (
+              <Card key={index} className='mb-3'>
+                <Card.Header>
+                  <Card.Title className='align-items-center d-flex justify-content-between'>
+                    Experience {index + 1}
+                    <Button
+                      variant='link'
+                      onClick={() => handleRemoveField('experience', index)}
+                      className='float-end'
+                    >
+                      <FaMinus />
+                    </Button>
+                  </Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <Form.Group controlId={`formExperienceTitle${index}`}>
+                    <Form.Label>Title</Form.Label>
+                    <Form.Control
+                      type='text'
+                      value={exp.title}
+                      onChange={(e) =>
+                        handleInputChange(e, 'experience', index, 'title')
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group controlId={`formExperienceCompany${index}`}>
+                    <Form.Label>Company</Form.Label>
+                    <Form.Control
+                      type='text'
+                      value={exp.companyName}
+                      onChange={(e) =>
+                        handleInputChange(e, 'experience', index, 'companyName')
+                      }
+                    />
+                  </Form.Group>
+                  <Row>
+                    <Col>
+                      <Form.Group controlId={`formExperienceStartDate${index}`}>
+                        <Form.Label>Start Date</Form.Label>
+                        <Form.Control
+                          type='text'
+                          value={exp.startDate}
+                          onChange={(e) =>
+                            handleInputChange(
+                              e,
+                              'experience',
+                              index,
+                              'startDate'
+                            )
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group controlId={`formExperienceEndDate${index}`}>
+                        <Form.Label>End Date</Form.Label>
+                        <Form.Control
+                          type='text'
+                          value={exp.endDate}
+                          onChange={(e) =>
+                            handleInputChange(e, 'experience', index, 'endDate')
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Form.Group controlId={`formExperienceDescription${index}`}>
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      as='textarea'
+                      rows={3}
+                      value={exp.description}
+                      onChange={(e) =>
+                        handleInputChange(e, 'experience', index, 'description')
+                      }
+                    />
+                  </Form.Group>
+                </Card.Body>
+              </Card>
+            ))}
+            <Button
+              variant='outline-primary'
+              onClick={() => handleAddField('experience')}
+            >
+              Add Experience
+            </Button>
+
+            <h5 className='mt-4'>Education</h5>
+            {profile.education.map((edu, index) => (
+              <Card key={index} className='mb-3'>
+                <Card.Header>
+                  <Card.Title className='align-items-center d-flex justify-content-between'>
+                    Education {index + 1}
+                    <Button
+                      variant='link'
+                      onClick={() => handleRemoveField('education', index)}
+                      className='float-end'
+                    >
+                      <FaMinus />
+                    </Button>
+                  </Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <Form.Group controlId={`formEducationDegree${index}`}>
+                    <Form.Label>Degree</Form.Label>
+                    <Form.Control
+                      type='text'
+                      value={edu.degreeName}
+                      onChange={(e) =>
+                        handleInputChange(e, 'education', index, 'degreeName')
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group controlId={`formEducationField${index}`}>
+                    <Form.Label>Field of Study</Form.Label>
+                    <Form.Control
+                      type='text'
+                      value={edu.fieldOfStudy}
+                      onChange={(e) =>
+                        handleInputChange(e, 'education', index, 'fieldOfStudy')
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group controlId={`formEducationSchool${index}`}>
+                    <Form.Label>School</Form.Label>
+                    <Form.Control
+                      type='text'
+                      value={edu.schoolName}
+                      onChange={(e) =>
+                        handleInputChange(e, 'education', index, 'schoolName')
+                      }
+                    />
+                  </Form.Group>
+                  <Row>
+                    <Col>
+                      <Form.Group controlId={`formEducationStartDate${index}`}>
+                        <Form.Label>Start Date</Form.Label>
+                        <Form.Control
+                          type='text'
+                          value={edu.startDate}
+                          onChange={(e) =>
+                            handleInputChange(
+                              e,
+                              'education',
+                              index,
+                              'startDate'
+                            )
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group controlId={`formEducationEndDate${index}`}>
+                        <Form.Label>End Date</Form.Label>
+                        <Form.Control
+                          type='text'
+                          value={edu.endDate}
+                          onChange={(e) =>
+                            handleInputChange(e, 'education', index, 'endDate')
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            ))}
+            <Button
+              variant='outline-primary'
+              onClick={() => handleAddField('education')}
+            >
+              Add Education
+            </Button>
+
+            <div className='mt-4'>
+              <Button
+                variant='success'
+                className='mt-4 text-white'
+                onClick={handleSubmitProfile}
+              >
+                <i className='fas fa-save me-2' />
+                Save Profile
+              </Button>
             </div>
-        );
-    }
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        setUpdating(true);
-        setUpdateMessage("Updating Profile");
-        setLoading(true);
-        setError('');
-
-        const userInfo = {
-            id: JSON.parse(window.localStorage.getItem('login_state')).id.toString(),
-            profile: JSON.parse(window.localStorage.getItem('login_state')).profile,
-            firstName: FirstNameRef.current.value,
-            lastName: LastNameRef.current.value,
-            mobileNumber: MobileNumberRef.current.value,
-            GPA: GPARef.current.value,
-            experiences: experiences,
-        };
-        setUserInfo(userInfo);
-        const formData = new FormData();
-        formData.append('file', resume);
-        formData.append('userInfo', JSON.stringify(userInfo));
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('https://uniedge-functions.azurewebsites.net/adduser', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}` 
-                  }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const responseData = await response.json();
-            if (responseData && (responseData.message == "Processed successfully" || responseData.message == "Profile Already Created")) {
-                window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
-                window.localStorage.setItem('resume',resume);
-                setUpdating(false);
-                setLoading(false);
-                setSuccess('Profile Updated Succesfullly ');
-                const loginState = JSON.parse(window.localStorage.getItem('login_state')) || {};
-                loginState.profile = responseData.profile;
-                window.localStorage.setItem('login_state', JSON.stringify(loginState));
-            }
-        } catch (error) {
-            console.error('Error submitting the profile data:', error);
-            setError('Failed to submit profile.');
-        } finally {
-            setLoading(false);
-            setUpdating(false);
-            setUpdateMessage("");
-        }
-    }
-    if (updating) {
-        return (
-            <div className="loader-container">
-                <Spinner style={{ width: '3rem', height: '3rem' }} />
-                <p style={{ margin: '1rem' }}>{updateMessage}</p>
-            </div>
-        );
-    }
-    const addExperience = () => {
-        setExperiences([...experiences, { years: '', role: '', company: '' }]);
-    };
-
-    const handleExperienceChange = (index, field, value) => {
-        const newExperiences = [...experiences];
-        newExperiences[index][field] = value;
-        setExperiences(newExperiences);
-    };
-    const removeExperience = (index) => {
-        setExperiences(experiences.filter((_, i) => i !== index));
-    };
-    const handleResumeChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            setResume(e.target.files[0]);
-            setResumeName(e.target.files[0].name);
-        }
-    };
-    return (
-        <>
-            <section class="section section-lg section-safe">
-                <Container>
-                    <div class="wrapper">
-                        <div class="profile-intro">
-                            Hello {userKeys && userKeys.username ? userKeys.username : "there"}! It's time to unleash your full potential and let opportunities find their way to you. Simply upload your resume and fill in the remaining details to give your profile that extra edge. Our Advanced Matching will work like a charm to connect you with jobs that fit like a glove - jobs that aren't just good, but are perfect for you. Get started and watch how we tailor the job hunt to your unique skills and aspirations!
-                        </div>
-                    </div>
-                    <Row>
-                        <Col class="offset-lg-0 offset-md-3" lg="10" md="6">
-                            <Card class="card-register">
-                                <CardBody>
-                                    {error && <Alert color="danger">{error}</Alert>}
-                                    {success && <Alert color="success">{success} Please explore the <Button
-                                    color="info"
-                                    onClick={() => navigate("/internships")}
-                                    >Internships</Button></Alert>}
-                                    <Form class="form" onSubmit={handleSubmit}>
-                                            <Col md={6}>
-                                                <FormGroup>
-                                                    <Label for="firstName">First Name</Label>
-                                                    <Input
-                                                        id="firstName"
-                                                        innerRef={FirstNameRef}
-                                                        placeholder={"First Name"}
-                                                        type="text"
-                                                        value = {userInfo?.firstName || ''}
-                                                        onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
-                                                    />
-                                                </FormGroup>
-                                            </Col>
-                                        <Col md={6}>
-                                            <FormGroup>
-                                                <Label for="lastName">Last Name</Label>
-                                                <Input
-                                                    id="lastName"
-                                                    innerRef={LastNameRef}
-                                                    placeholder={"Last Name"}
-                                                    type="text"
-                                                    value = {userInfo?.lastName || ''}
-                                                    onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
-                                                />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={6}>
-                                            <FormGroup>
-                                                <Label for="mobileNumber">Mobile Number</Label>
-                                                <Input
-                                                    id="mobileNumber"
-                                                    innerRef={MobileNumberRef}
-                                                    placeholder="Mobile Number"
-                                                    type="text"
-                                                    value = {userInfo?.mobileNumber || ''}
-                                                    onChange={(e) => setUserInfo({ ...userInfo, mobileNumber: e.target.value })}
-                                                />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={6}>
-                                            <FormGroup>
-                                                <Label for="GPA">GPA</Label>
-                                                <Input
-                                                    id="GPA"
-                                                    innerRef={GPARef}
-                                                    placeholder="GPA out 4"
-                                                    type="text"
-                                                    value = {userInfo?.GPA || ''}
-                                                    onChange={(e) => setUserInfo({ ...userInfo, GPA: e.target.value })}
-                                                />
-                                            </FormGroup>
-                                        </Col>
-                                        {experiences.map((experience, index) => (
-                                            <Row key={index}>
-                                                <Col md={3}>
-                                                    <FormGroup>
-                                                        <Label>Years</Label>
-                                                        <Input
-                                                            value={experience?.years}
-                                                            onChange={(e) => handleExperienceChange(index, 'years', e.target.value)}
-                                                            placeholder="Years"
-                                                            type="number"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col md={3}>
-                                                    <FormGroup>
-                                                        <Label>Role</Label>
-                                                        <Input
-                                                            value={experience?.role}
-                                                            onChange={(e) => handleExperienceChange(index, 'role', e.target.value)}
-                                                            placeholder="Role"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col md={3}>
-                                                    <FormGroup>
-                                                        <Label>Company</Label>
-                                                        <Input
-                                                            value={experience?.company}
-                                                            onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                                                            placeholder="company"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col md={2} class="align-self-center">
-                                                    <Button close onClick={() => removeExperience(index)}>
-                                                        <span aria-hidden>&times;</span>
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        ))}
-                                        <div class="add-experience">
-                                            <Button color="primary" onClick={addExperience} style={{ marginBottom: '1rem' }}>
-                                                + Add Experience
-                                            </Button>
-                                        </div>
-                                        <Col md={5}>
-                                            <FormGroup>
-                                                <Label for="resumeUpload">Upload Resume</Label>
-                                                <Input
-                                                    id="resumeUpload"
-                                                    type="file"
-                                                    onChange={handleResumeChange}
-                                                    style={{ marginBottom: '1rem' }}
-                                                />
-                                                {resumeName && <div class="resume-name">Resume: {resumeName}</div>}
-                                            </FormGroup>
-                                        </Col>
-                                        <Button disabled={loading} color="info" size="sm" type="submit">
-                                            Submit
-                                        </Button>
-                                    </Form>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </section>
-            <Footer />
-        </>
-    );
-}
+export default ProfileForm;

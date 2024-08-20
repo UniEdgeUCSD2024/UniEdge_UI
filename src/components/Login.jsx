@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Alert, Container, Row, Col, Input } from 'reactstrap';
+import { Form, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ export default function Login() {
   const { login } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -36,7 +36,7 @@ export default function Login() {
       if (response.ok) {
         const loginState = await response.json();
         localStorage.setItem('login_state', JSON.stringify(loginState));
-        history('/home');
+        navigate('/home');
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to log in');
@@ -49,69 +49,58 @@ export default function Login() {
   }
 
   return (
-    <>
-      <div className='wrapper'>
-        <div className='page-header'>
-          <div className='content'>
-            <Container>
-              <Row>
-                <Col className='offset-lg-0 offset-md-3' lg='5' md='6'>
-                  <h1 className='text-black font-weight-bold text-start'>
-                    Login
-                  </h1>
+    <Container className='mt-5 pt-5'>
+      <Row>
+        <Col lg='5' md='6' className='offset-lg-0 offset-md-3'>
+          <h1 className='text-black font-weight-bold text-start'>Login</h1>
 
-                  {error && (
-                    <Alert variant='danger' style={{ backgroundColor: 'red' }}>
-                      {error}
-                    </Alert>
-                  )}
-                  <Form className='form'>
-                    <Input
-                      innerRef={emailRef}
-                      placeholder='Email'
-                      type='text'
-                    />
-                    <Input
-                      style={{ marginTop: '1rem' }}
-                      innerRef={passwordRef}
-                      placeholder='Password'
-                      type='password'
-                    />
-                  </Form>
+          {error && (
+            <Alert variant='danger' style={{ backgroundColor: 'red' }}>
+              {error}
+            </Alert>
+          )}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId='formBasicEmail'>
+              <Form.Control
+                ref={emailRef}
+                type='email'
+                placeholder='Email'
+                required
+              />
+            </Form.Group>
 
-                  <div className='d-flex'>
-                    <Button
-                      disabled={loading}
-                      className='btn-round'
-                      color='info'
-                      size='lg'
-                      onClick={handleSubmit}
-                    >
-                      Login
-                    </Button>
-                  </div>
+            <Form.Group controlId='formBasicPassword' className='mt-3'>
+              <Form.Control
+                ref={passwordRef}
+                type='password'
+                placeholder='Password'
+                required
+              />
+            </Form.Group>
 
-                  <div className='text-start'>
-                    <Link to='/forgotpassword'>Forgot Password?</Link>
-                  </div>
-                  <div className='w-100 text-center mt-2'>
-                    Need an account? <Link to='/register'>Sign Up</Link>
-                  </div>
-                </Col>
-                <Col>
-                  {/* <img
-                    width={"60%"}
-                    style={{ float: "right" }}
-                    alt="..."
-                    className="img-fluid"
-                    src={require("../assets/img/peel.png")}
-                  /> */}
-                </Col>
-              </Row>
-            </Container>
+            <Button disabled={loading} className='mt-4' type='submit' size='lg'>
+              Login
+            </Button>
+          </Form>
+
+          <div className='text-start mt-3'>
+            <Link to='/forgotpassword'>Forgot Password?</Link>
           </div>
-        </div>
-      </div>
-    </>
+          <div className='w-100 text-center mt-2'>
+            Need an account? <Link to='/register'>Sign Up</Link>
+          </div>
+        </Col>
+        <Col>
+          {/* Placeholder for an image */}
+          {/* <img
+            width={"60%"}
+            style={{ float: "right" }}
+            alt="..."
+            className="img-fluid"
+            src={require("../assets/img/peel.png")}
+          /> */}
+        </Col>
+      </Row>
+    </Container>
   );
 }

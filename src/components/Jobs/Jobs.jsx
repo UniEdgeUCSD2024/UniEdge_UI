@@ -52,13 +52,13 @@ const Jobs = () => {
 
   const { logout } = useContext(AuthContext);
   return (
-    <Container>
+    <Container className='h-100'>
       {/* navbar */}
       <Navbar bg='white' expand='lg'>
         <Navbar.Brand href='#/home'>UniEdge</Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
-          <Nav className='ml-auto'>
+          <Nav className='ms-auto'>
             {/* <Nav.Link href='#learn'>Learn</Nav.Link>
             <Nav.Link href='#practice'>Practice</Nav.Link>
             <Nav.Link href='#mentorship'>Mentorship</Nav.Link>
@@ -86,7 +86,7 @@ const Jobs = () => {
       </Navbar>
 
       {/* content */}
-      <Row>
+      <Row className='mt-5 pt-5'>
         {/* Left Column */}
         <Col
           md={6}

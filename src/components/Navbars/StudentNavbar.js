@@ -1,158 +1,71 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Button,
-  Collapse,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  NavbarBrand,
-  Navbar,
-  NavItem,
-  Nav,
-  Container,
-  Row,
-  Col,
-} from 'reactstrap';
-import { AuthContext, useAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function StudentNavbar() {
-  let navigate = useNavigate();
-  const [collapseOpen, setCollapseOpen] = React.useState(false);
-  const [collapseOut, setCollapseOut] = React.useState('');
-  const [color, setColor] = React.useState('navbar-transparent');
-  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [scrolling, setScrolling] = useState(false);
   const { userKeys } = useContext(AuthContext);
 
-  React.useEffect(() => {
-    window.addEventListener('scroll', changeColor);
-    return function cleanup() {
-      window.removeEventListener('scroll', changeColor);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolling(window.scrollY > 99);
     };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  const changeColor = () => {
-    if (
-      document.documentElement.scrollTop > 99 ||
-      document.body.scrollTop > 99
-    ) {
-      setColor('bg-info');
-    } else if (
-      document.documentElement.scrollTop < 100 ||
-      document.body.scrollTop < 100
-    ) {
-      setColor('navbar-transparent');
-    }
-  };
-  function logout() {
+
+  const handleLogout = () => {
     window.localStorage.clear();
-  }
-  const toggleCollapse = () => {
-    document.documentElement.classList.toggle('nav-open');
-    setCollapseOpen(!collapseOpen);
+    navigate('/');
   };
-  const onCollapseExiting = () => {
-    setCollapseOut('collapsing-out');
-  };
-  const onCollapseExited = () => {
-    setCollapseOut('');
-  };
+
   return (
-    <Navbar className={'fixed-top ' + color} color-on-scroll='100' expand='lg'>
+    <Navbar
+      fixed='top'
+      expand='lg'
+      className={scrolling ? 'bg-white' : 'navbar-transparent'}
+    >
       <Container>
-        <div className='navbar-translate'>
-          <NavbarBrand to='/home' tag={Link} id='navbar-brand'>
-            <span style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>
-              UniEdge
-            </span>
-          </NavbarBrand>
-          {/* <UncontrolledTooltip placement="bottom" target="navbar-brand">
-            Designed and Coded by Creative Tim
-          </UncontrolledTooltip> */}
-          <button
-            aria-expanded={collapseOpen}
-            className='navbar-toggler navbar-toggler'
-            onClick={toggleCollapse}
-          >
-            <span className='navbar-toggler-bar bar1' />
-            <span className='navbar-toggler-bar bar2' />
-            <span className='navbar-toggler-bar bar3' />
-          </button>
-        </div>
-        <Collapse
-          className={'justify-content-end ' + collapseOut}
-          navbar
-          isOpen={collapseOpen}
-          onExiting={onCollapseExiting}
-          onExited={onCollapseExited}
+        <Navbar.Brand as={Link} to='/home'>
+          <span>UniEdge</span>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls='basic-navbar-nav' />
+        <Navbar.Collapse
+          id='basic-navbar-nav'
+          className='justify-content-end w-100'
         >
-          <div className='navbar-collapse-header'>
-            <Row>
-              <Col className='collapse-brand' xs='6'>
-                <a href='#pablo' onClick={(e) => e.preventDefault()}>
-                  UniEdge
-                </a>
-              </Col>
-              <Col className='collapse-close text-right' xs='6'>
-                <button
-                  aria-expanded={collapseOpen}
-                  className='navbar-toggler'
-                  onClick={toggleCollapse}
-                >
-                  <i className='tim-icons icon-simple-remove' />
-                </button>
-              </Col>
-            </Row>
-          </div>
-          <Nav navbar>
-            <NavItem>
-              <Button
-                className='nav-link d-none d-lg-block'
-                color='default'
-                onClick={() => navigate('/internships')}
-              >
-                <i className='tim-icons icon-zoom-split' /> Internships
-              </Button>
-            </NavItem>
-            <NavItem>
-              <Button
-                className='nav-link d-none d-lg-block'
-                color='default'
-                onClick={() => navigate('/services')}
-              >
-                <i className='tim-icons icon-single-02' /> Services
-              </Button>
-            </NavItem>
-            <NavItem>
-              <UncontrolledDropdown nav>
-                <DropdownToggle
-                  caret
-                  color='default'
-                  data-toggle='dropdown'
-                  href='#pablo'
-                  nav
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <i className='fa fa-cogs d-lg-none d-xl-none' />
-                  Hi {userKeys ? userKeys.username : ''} !
-                </DropdownToggle>
-                <DropdownMenu
-                  className='dropdown-with-icons'
-                  style={{ backgroundColor: '#171941' }}
-                >
-                  <DropdownItem tag={Link} to='/' onClick={logout}>
-                    <i className='tim-icons icon-badge' />
-                    Logout
-                  </DropdownItem>
-                  <DropdownItem tag={Link} to='/studentprofile'>
-                    <i className='tim-icons icon-badge' />
-                    Profile
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </NavItem>
+          <Nav className='ms-auto'>
+            <Nav.Link
+              as={Button}
+              variant='link'
+              onClick={() => navigate('/internships')}
+            >
+              <i className='tim-icons icon-zoom-split' /> Internships
+            </Nav.Link>
+            <Nav.Link
+              as={Button}
+              variant='link'
+              onClick={() => navigate('/services')}
+            >
+              <i className='tim-icons icon-single-02' /> Services
+            </Nav.Link>
+            <NavDropdown
+              title={`Hi ${userKeys ? userKeys.username : 'Guest'}!`}
+              id='basic-nav-dropdown'
+              align='end'
+            >
+              <NavDropdown.Item as={Link} to='/jobs/seeker/profile'>
+                <i className='tim-icons icon-badge' /> Profile
+              </NavDropdown.Item>
+              <NavDropdown.Item as='button' onClick={handleLogout}>
+                <i className='tim-icons icon-badge' /> Logout
+              </NavDropdown.Item>
+            </NavDropdown>
           </Nav>
-        </Collapse>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

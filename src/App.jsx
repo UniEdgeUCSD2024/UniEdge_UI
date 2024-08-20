@@ -16,6 +16,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LandingPageMentoring from './pages/LandingPageMentoring';
 import MentorRegisterPage from './pages/MentorRegister';
 import Jobs from './components/Jobs/Jobs';
+import Poster from './pages/Poster';
 
 const App = () => {
   return (
@@ -35,7 +36,11 @@ const App = () => {
             <Route path='/recruiter' element={<RecruiterHomePage />} />
             <Route path='/internships' element={<InternshipsPage />} />
             <Route path='/services' element={<ServicesPage />} />
-            <Route path='/studentprofile' element={<StudentProfilePage />} />
+            <Route
+              path='/:service/:role/profile'
+              element={<StudentProfilePage />}
+            />
+            <Route path='/:service/poster' element={<Poster />} />
             <Route path='/volunteer' element={<VolunteerPage />} />
             <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
             <Route path='/mentorregister' element={<MentorRegisterPage />} />

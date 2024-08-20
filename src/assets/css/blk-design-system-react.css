@@ -11878,39 +11878,6 @@ a.text-darker:focus {
   margin: 4px 1px;
   border-radius: 0.4285rem;
   cursor: pointer;
-
-  background-image: -webkit-linear-gradient(
-    to bottom left,
-    var(--primary-light),
-    var(--primary),
-    var(--primary-light)
-  );
-  background-image: -o-linear-gradient(
-    to bottom left,
-    var(--primary-light),
-    var(--primary),
-    var(--primary-light)
-  );
-  background-image: -moz-linear-gradient(
-    to bottom left,
-    var(--primary-light),
-    var(--primary),
-    var(--primary-light)
-  );
-
-  background-color: var(--primary);
-  background-image: linear-gradient(
-    to bottom left,
-    var(--primary-light),
-    var(--primary),
-    var(--primary-light)
-  );
-  background-size: 210% 210%;
-  background-position: top right;
-
-  transition: all 0.15s ease;
-  box-shadow: none;
-  color: var(--primary-contrast);
 }
 .btn.animation-on-hover:hover,
 .navbar .navbar-nav > a.btn.animation-on-hover:hover {

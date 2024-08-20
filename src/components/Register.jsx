@@ -7,10 +7,10 @@ import {
   Container,
   Form,
   FormGroup,
-  Input,
-  Label,
+  FormCheck,
+  FormControl,
   Row,
-} from 'reactstrap';
+} from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 
 export default function UserSignup() {
@@ -21,7 +21,7 @@ export default function UserSignup() {
   const { signup } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const [selectedService, setSelectedService] = useState(
@@ -59,7 +59,7 @@ export default function UserSignup() {
       if (response.ok) {
         const user_status = await response.json();
         updateRegisterState(user_status);
-        history('/home');
+        navigate('/home');
       } else {
         setError('Failed to create account.');
       }
@@ -76,83 +76,65 @@ export default function UserSignup() {
   }
 
   return (
-    <>
-      <div className='wrapper'>
-        <div className='page-header'>
-          <div className='content'>
-            <Container>
-              <Row>
-                <Col className='offset-lg-0 offset-md-3 g-3' lg='5' md='6'>
-                  <h1 className=' font-weight-bold h1'>Register</h1>
+    <Container className='mt-5 pt-5'>
+      <Row>
+        <Col className='offset-lg-0 offset-md-3 g-3' lg={5} md={6}>
+          <h1 className='font-weight-bold'>Register</h1>
 
-                  {error && (
-                    <Alert variant='danger' style={{ backgroundColor: 'red' }}>
-                      {error}
-                    </Alert>
-                  )}
-                  <Form className='form' onSubmit={handleSubmit}>
-                    <Input
-                      innerRef={emailRef}
-                      placeholder='Email'
-                      type='text'
-                    />
+          {error && (
+            <Alert variant='danger' style={{ backgroundColor: 'red' }}>
+              {error}
+            </Alert>
+          )}
 
-                    <Input
-                      style={{ marginTop: '1rem' }}
-                      innerRef={passwordRef}
-                      placeholder='Password'
-                      type='password'
-                    />
-                    <Input
-                      style={{ marginTop: '1rem' }}
-                      innerRef={passwordConfirmRef}
-                      placeholder='Confirm Password'
-                      type='password'
-                    />
+          <Form onSubmit={handleSubmit}>
+            <FormControl
+              ref={emailRef}
+              placeholder='Email'
+              type='email'
+              required
+            />
 
-                    {/* service select - with options: professional-prospects, personal-prospects, mentoring, life-coaching, volunteering */}
+            <FormControl
+              className='mt-3'
+              ref={passwordRef}
+              placeholder='Password'
+              type='password'
+              required
+            />
 
-                    <FormGroup check className='text-left'>
-                      <Label check>
-                        <Input type='checkbox' />
-                        <span className='form-check-sign' />
-                        <span className='text-black'>I agree to the </span>
-                        <a href='#pablo' onClick={(e) => e.preventDefault()}>
-                          terms and conditions
-                        </a>
-                        .
-                      </Label>
-                    </FormGroup>
-                  </Form>
+            <FormControl
+              className='mt-3'
+              ref={passwordConfirmRef}
+              placeholder='Confirm Password'
+              type='password'
+              required
+            />
 
-                  <Button
-                    disabled={loading}
-                    className='btn-round'
-                    color='info'
-                    size='lg'
-                    onClick={handleSubmit}
-                  >
-                    Sign Up
-                  </Button>
+            <FormGroup className='mt-3'>
+              <FormCheck>
+                <FormCheck.Input type='checkbox' required />
+                <FormCheck.Label>
+                  I agree to the{' '}
+                  <Link to='#' onClick={(e) => e.preventDefault()}>
+                    terms and conditions
+                  </Link>
+                  .
+                </FormCheck.Label>
+              </FormCheck>
+            </FormGroup>
 
-                  <div className='text-center'>
-                    Already have an account? <Link to='/login'>Log In</Link>
-                  </div>
-                </Col>
-                <Col>
-                  {/* <img
-                    width={"60%"}
-                    style={{ float: "right" }}
-                    alt="..."
-                    className="img-fluid"
-                    src={require("../assets/img/field.png")}
-                  /> */}
-                </Col>
-              </Row>
-            </Container>
+            <Button disabled={loading} type='submit' size='lg' className='mt-4'>
+              Sign Up
+            </Button>
+          </Form>
+
+          <div className='text-center mt-3'>
+            Already have an account? <Link to='/login'>Log In</Link>
           </div>
-        </div>
-      </div>
-    </>
+        </Col>
+        <Col>{/* Add your image or additional content here if needed */}</Col>
+      </Row>
+    </Container>
   );
 }
