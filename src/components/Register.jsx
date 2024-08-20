@@ -10,6 +10,7 @@ import {
   FormCheck,
   FormControl,
   Row,
+  Card,
 } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 
@@ -79,59 +80,68 @@ export default function UserSignup() {
     <Container className='mt-5 pt-5'>
       <Row>
         <Col className='offset-lg-0 offset-md-3 g-3' lg={5} md={6}>
-          <h1 className='font-weight-bold'>Register</h1>
+          <Card>
+            <Card.Body>
+              <h1 className='font-weight-bold'>Register</h1>
 
-          {error && (
-            <Alert variant='danger' style={{ backgroundColor: 'red' }}>
-              {error}
-            </Alert>
-          )}
+              {error && (
+                <Alert variant='danger' style={{ backgroundColor: 'red' }}>
+                  {error}
+                </Alert>
+              )}
 
-          <Form onSubmit={handleSubmit}>
-            <FormControl
-              ref={emailRef}
-              placeholder='Email'
-              type='email'
-              required
-            />
+              <Form onSubmit={handleSubmit}>
+                <FormControl
+                  ref={emailRef}
+                  placeholder='Email'
+                  type='email'
+                  required
+                />
 
-            <FormControl
-              className='mt-3'
-              ref={passwordRef}
-              placeholder='Password'
-              type='password'
-              required
-            />
+                <FormControl
+                  className='mt-3'
+                  ref={passwordRef}
+                  placeholder='Password'
+                  type='password'
+                  required
+                />
 
-            <FormControl
-              className='mt-3'
-              ref={passwordConfirmRef}
-              placeholder='Confirm Password'
-              type='password'
-              required
-            />
+                <FormControl
+                  className='mt-3'
+                  ref={passwordConfirmRef}
+                  placeholder='Confirm Password'
+                  type='password'
+                  required
+                />
 
-            <FormGroup className='mt-3'>
-              <FormCheck>
-                <FormCheck.Input type='checkbox' required />
-                <FormCheck.Label>
-                  I agree to the{' '}
-                  <Link to='#' onClick={(e) => e.preventDefault()}>
-                    terms and conditions
-                  </Link>
-                  .
-                </FormCheck.Label>
-              </FormCheck>
-            </FormGroup>
+                <FormGroup className='mt-3'>
+                  <FormCheck>
+                    <FormCheck.Input type='checkbox' required />
+                    <FormCheck.Label>
+                      I agree to the{' '}
+                      <Link to='#' onClick={(e) => e.preventDefault()}>
+                        terms and conditions
+                      </Link>
+                      .
+                    </FormCheck.Label>
+                  </FormCheck>
+                </FormGroup>
 
-            <Button disabled={loading} type='submit' size='lg' className='mt-4'>
-              Sign Up
-            </Button>
-          </Form>
+                <Button
+                  disabled={loading}
+                  type='submit'
+                  size='lg'
+                  className='mt-4'
+                >
+                  Sign Up
+                </Button>
+              </Form>
 
-          <div className='text-center mt-3'>
-            Already have an account? <Link to='/login'>Log In</Link>
-          </div>
+              <div className='text-center mt-3'>
+                Already have an account? <Link to='/login'>Log In</Link>
+              </div>
+            </Card.Body>
+          </Card>
         </Col>
         <Col>{/* Add your image or additional content here if needed */}</Col>
       </Row>
