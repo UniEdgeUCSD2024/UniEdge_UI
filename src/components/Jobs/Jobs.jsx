@@ -13,41 +13,41 @@ import { AuthContext } from '../../context/AuthContext';
 const Jobs = () => {
   const cardData = [
     {
-      title: 'Internship',
-      subtitle: 'Gain Practical Experience',
-      bgColor: '#9BE6C1',
-      link: '/#/internship',
-    },
-    {
       title: 'Jobs',
       subtitle: 'Explore Diverse Careers',
       bgColor: '#FFB1CC',
       link: '/#/jobs',
     },
     {
-      title: 'Compete',
-      subtitle: 'Battle For Excellence',
+      title: 'Mentorship',
+      subtitle: 'Guide Your Growth Journey',
       bgColor: '#9BC9FF',
       link: '/#/compete',
     },
     {
-      title: 'Learn',
-      subtitle: 'Expand Knowledge Base',
+      title: 'Life Coaching',
+      subtitle: 'Transform Your Life Path',
       bgColor: '#C8BBFF',
       link: '/#/learn',
     },
     {
-      title: 'Practice',
-      subtitle: 'Refine Skills Daily',
+      title: 'Volunteering',
+      subtitle: 'Make a Meaningful Impact',
       bgColor: '#FFDD80',
       link: '/#/practice',
     },
     {
-      title: 'Mentorship',
-      subtitle: 'Guidance From Top Mentors',
+      title: 'Networking',
+      subtitle: 'Build Powerful Connections',
       bgColor: '#FEC192',
       link: '/#/mentorship',
     },
+    {
+      title: 'Personal Prospects',
+      subtitle: 'Discover Your True Potential',
+      bgColor: '#9BE6C1',
+      link: '/#/mentorship',
+    }
   ];
 
   const { logout } = useContext(AuthContext);
@@ -93,10 +93,8 @@ const Jobs = () => {
           className='d-flex align-items-center justify-content-center p-4'
         >
           <div>
-            <h1>Unlock Your Career</h1>
-            <p>
-              Explore opportunities from across the globe to learn, showcase
-              skills, gain CV points & get hired by your dream company.
+            <h1><strong>Empower Your Future</strong></h1>
+            <p> Unlock opportunities, gain insights, and build meaningful connections. From career growth to personal development, we're here to support every step of your journey.
             </p>
           </div>
         </Col>
