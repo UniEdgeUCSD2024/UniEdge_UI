@@ -43,19 +43,13 @@ export default function StudentHome() {
                 >
                   <h2 className='title'>Empowering Your Job Hunt Journey</h2>
                   <h4 className='description'>
-                    Hey {userKeys ? userKeys.username : ''}, UniEdge understands
-                    the challenges university students face in today's
-                    competitive job market. That's why we're dedicated to
-                    supporting your career ambitions. Explore our tailored job
-                    search services, leverage curated coaching, and gain an edge
-                    with UniEdge. Let's navigate this journey together and
-                    unlock the doors to your professional future.
+                    Hey {userKeys ? userKeys.username : ''}, UniEdge understands the challenges in today's job market. Whether you're seeking a career or top talent, we're here to help. Explore tailored job services, access expert coaching, and connect with the best opportunities or candidates. Together, let's unlock your professional future.
                   </h4>
                   <Button color='info' onClick={() => navigate('/internships')}>
-                    Explore the Internships
+                    Job Seeker
                   </Button>
                   <Button color='success' onClick={() => navigate('/services')}>
-                    Gain Edge with our Services
+                    Job Poster
                   </Button>
                 </div>
               </Col>
@@ -71,7 +65,7 @@ export default function StudentHome() {
             <Row className='justify-content-center'>
               <Col lg='12'>
                 <h1 className='text-center' style={{ marginBottom: '-5%' }}>
-                  Our Services
+                  Our Benefits
                 </h1>
                 <Row className='row-grid justify-content-center'>
                   <Col lg='3' className='text-center'>

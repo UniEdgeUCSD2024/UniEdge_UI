@@ -311,8 +311,9 @@ function InternshipDetails() {
             <p className="role-clicked">
               To view internship listings, please ensure your profile is fully updated on the <Button
                 color="info"
+                size="sm"
                 onClick={() => navigate("/studentprofile")}
-              >Profile</Button> page
+              >Profile</Button> page.
             </p>
           )}
         </div>
