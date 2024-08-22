@@ -100,7 +100,7 @@ function InternshipDetails() {
   const fetchJobs = (role) => {
     setSelectedRole(role);
     setIsLoading(true);
-    const url = `https://uniedge-functions.azurewebsites.net/fetchjobdetails`;
+    const url = `https://uniedge-prospect-functions.azurewebsites.net/fetchjobdetails`;
     fetch(url, {
       method: 'POST',
       headers: {
