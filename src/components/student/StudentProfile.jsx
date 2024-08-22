@@ -21,8 +21,10 @@ const ProfileForm = () => {
   const serviceName = capitalize(parameters.service);
   const role = capitalize(parameters.role);
 
+  const loginState = JSON.parse(localStorage.getItem('login_state'));
+
   const [profile, setProfile] = useState({
-    firstName: '',
+    firstName: loginState.Profile.FirstName || '',
     lastName: '',
     experience: [],
     education: [],
@@ -38,7 +40,6 @@ const ProfileForm = () => {
     setLoading(true);
 
     try {
-      const loginState = JSON.parse(localStorage.getItem('login_state'));
       console.log('loginState:', loginState);
       const response = await fetch(
         'https://uniedge-prospect-functions.azurewebsites.net/linkedinprofile',
@@ -112,8 +113,9 @@ const ProfileForm = () => {
       alert('Please fill in the first name and last name fields.');
       return;
     }
-
+    const loginState = JSON.parse(localStorage.getItem('login_state'));
     const profileDetails = {
+      Id: loginState.Id,
       LastName: lastName,
       FirstName: firstName,
       Headline: headline,
@@ -133,17 +135,16 @@ const ProfileForm = () => {
       })),
     };
 
-    const loginState = JSON.parse(localStorage.getItem('login_state'));
     const token = localStorage.getItem('token');
 
     if (resume) {
       const formData = new FormData();
       formData.append('file', resume);
-
+      console.log(loginState);
       formData.append(
         'userInfo',
         JSON.stringify({
-          Id: loginState.id,
+          Id: loginState.Id,
           Service: serviceName,
           Role: role,
           Email: userKeys.email,
@@ -166,6 +167,7 @@ const ProfileForm = () => {
 
         const data = await response.json();
         console.log('Response:', data);
+        localStorage.setItem('login_state', JSON.stringify(data));
       } catch (error) {
         console.error('Error submitting profile with resume:', error);
       }
@@ -193,6 +195,7 @@ const ProfileForm = () => {
 
         const data = await response.json();
         console.log('Response:', data);
+        localStorage.setItem('login_state', JSON.stringify(data));
       } catch (error) {
         console.error('Error submitting profile:', error);
       }
