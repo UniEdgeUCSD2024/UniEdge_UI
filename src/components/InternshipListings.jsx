@@ -320,7 +320,7 @@ function InternshipDetails() {
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
   return (
-    <div className='wrapper mt-5 py-5 container'>
+    <div className='wrapper mt-5 py-5'>
       {showOverlay && <MatchingOverlay />}
       <Modal
         isOpen={modal}

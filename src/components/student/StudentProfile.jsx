@@ -8,6 +8,7 @@ import {
   InputGroup,
   Spinner,
   Card,
+  Alert,
 } from 'react-bootstrap';
 import { FaMinus } from 'react-icons/fa';
 import { AuthContext } from '../../context/AuthContext';
@@ -33,6 +34,9 @@ const ProfileForm = () => {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
+
   const handleLinkedInUrlChange = (e) => setLinkedInUrl(e.target.value);
 
   const handleUploadLinkedInProfile = async () => {
@@ -40,7 +44,7 @@ const ProfileForm = () => {
     setLoading(true);
 
     try {
-      console.log('loginState:', loginState);
+      setError('');
       const response = await fetch(
         'https://uniedge-prospect-functions.azurewebsites.net/linkedinprofile',
         {
@@ -68,6 +72,7 @@ const ProfileForm = () => {
       }
     } catch (error) {
       console.error('Error uploading LinkedIn profile:', error);
+      setError('Something went wrong. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -106,6 +111,8 @@ const ProfileForm = () => {
 
   const handleResumeUpload = (e) => setResume(e.target.files[0]);
 
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmitProfile = async () => {
     const { firstName, lastName, experience, education, headline } = profile;
 
@@ -113,6 +120,9 @@ const ProfileForm = () => {
       alert('Please fill in the first name and last name fields.');
       return;
     }
+
+    setError('');
+    setSubmitting(true);
     const loginState = JSON.parse(localStorage.getItem('login_state'));
     const profileDetails = {
       Id: loginState.Id,
@@ -168,8 +178,10 @@ const ProfileForm = () => {
         const data = await response.json();
         console.log('Response:', data);
         localStorage.setItem('login_state', JSON.stringify(data));
+        setSuccess(true);
       } catch (error) {
         console.error('Error submitting profile with resume:', error);
+        setError('Something went wrong. Please try again later.');
       }
     } else {
       // resume not attached;
@@ -196,15 +208,27 @@ const ProfileForm = () => {
         const data = await response.json();
         console.log('Response:', data);
         localStorage.setItem('login_state', JSON.stringify(data));
+        setSuccess(true);
       } catch (error) {
         console.error('Error submitting profile:', error);
+        setError('Something went wrong. Please try again later.');
       }
     }
+
+    setSubmitting(false);
   };
 
   return (
     <Container className='py-5 mt-5'>
       <Row>
+        <Col xs={12}>
+          {error && <Alert variant='error'>{error}</Alert>}
+          {success && (
+            <Alert variant='success'>
+              Your profile has been successfully saved.
+            </Alert>
+          )}
+        </Col>
         <Col xs={12} md={6}>
           <h4>Upload Your LinkedIn Profile</h4>
           <InputGroup className='mb-3'>
@@ -442,9 +466,10 @@ const ProfileForm = () => {
                 variant='success'
                 className='mt-4 text-white'
                 onClick={handleSubmitProfile}
+                disabled={submitting}
               >
                 <i className='fas fa-save me-2' />
-                Save Profile
+                {submitting ? 'Saving...' : 'Save Profile'}
               </Button>
             </div>
           </Form>
