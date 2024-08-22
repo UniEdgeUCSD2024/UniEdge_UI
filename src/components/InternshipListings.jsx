@@ -31,10 +31,9 @@ function InternshipDetails() {
   const [matchingResult, setMatchingResult] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const token = localStorage.getItem('token');
-  const user_id = JSON.parse(window.localStorage.getItem('login_state')).id;
-  const profile = JSON.parse(
-    window.localStorage.getItem('login_state')
-  ).profile;
+  const user_id = JSON.parse(window.localStorage.getItem('login_state')).Id;
+  const profile = JSON.parse(window.localStorage.getItem('login_state')).Profile
+    ?.Jobs?.Seeker;
   const selectedStatesText =
     selectedStates.length > 0 ? selectedStates.join(', ') : 'Location';
   const [dropdownOpen, setDropdownOpen] = useState(false);
