@@ -30,6 +30,7 @@ const App = () => {
 
           <Route path='/uniedge' element={<LandingPageUniEdge />} />
           <Route path='/mentoringlanding' element={<LandingPageMentoring />} />
+          <Route path='/:service/poster' element={<Poster />} />
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path='/home' element={<Services />} />
@@ -41,7 +42,7 @@ const App = () => {
               path='/:service/:role/profile'
               element={<StudentProfilePage />}
             />
-            <Route path='/:service/poster' element={<Poster />} />
+
             <Route path='/volunteer' element={<VolunteerPage />} />
             <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
             <Route path='/mentorregister' element={<MentorRegisterPage />} />

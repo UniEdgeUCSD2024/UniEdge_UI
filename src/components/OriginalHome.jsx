@@ -84,9 +84,9 @@ export default function OriginalHome() {
 
             {/* post a job */}
             <Button
-              outline
               size='lg'
               className='ms-4'
+              color='primary'
               onClick={() => navigate('/jobs/poster')}
             >
               Post a Job <i className='tim-icons icon-minimal-right' />
