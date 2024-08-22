@@ -9,6 +9,8 @@ $theme-colors: (
   'dark': #212529,
 );
 $primary: rgb(1 212 207);
+$border-color: rgba(0, 0, 0, 0.606);
+$border-width: 1.5px;
 @import '~bootswatch/dist/zephyr/variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootswatch/dist/zephyr/bootswatch';
@@ -82,4 +84,24 @@ body {
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: 700;
+}
+
+.card {
+  border-color: black;
+}
+$placeholder-color: rgba(0, 0, 0, 0.773);
+.form-control::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: $placeholder-color;
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: $placeholder-color;
+}
+
+.form-control::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: $placeholder-color;
 }
