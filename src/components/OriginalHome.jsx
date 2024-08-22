@@ -60,7 +60,7 @@ export default function OriginalHome() {
   return (
     <>
       <section>
-        <Container className='landing-container'>
+        <Container className='landing-container mb-5'>
           <h1 className='landing-heading'>{getData(service).title}</h1>
           <h2 className='landing-tagline'>{getData(service).subtitle}</h2>
           {/* descripiton */}
@@ -68,22 +68,34 @@ export default function OriginalHome() {
             {getData(service).description}
           </h3>
           {/* get started */}
-          <Button
-            className='btn-round btn-lg landing-button'
-            color='primary'
-            onClick={() =>
-              navigate({
-                pathname: '/register',
-                search: service ? `?service=${service}` : '',
-              })
-            }
-          >
-            Get Started <i className='tim-icons icon-minimal-right' />
-          </Button>
+          <div className='d-flex justify-content-center'>
+            <Button
+              className='btn-round btn-lg landing-button'
+              color='primary'
+              onClick={() =>
+                navigate({
+                  pathname: '/register',
+                  search: service ? `?service=${service}` : '',
+                })
+              }
+            >
+              Get Started <i className='tim-icons icon-minimal-right' />
+            </Button>
+
+            {/* post a job */}
+            <Button
+              outline
+              size='lg'
+              className='ms-4'
+              onClick={() => navigate('/jobs/poster')}
+            >
+              Post a Job <i className='tim-icons icon-minimal-right' />
+            </Button>
+          </div>
         </Container>
       </section>
 
-      <section className='section section-lg'>
+      <section className='section section-lg py-5'>
         {/* benefits heading in center */}
         <h1 className='h1 font-weight-bold text-center'>Our Benefits</h1>
         <Container>
