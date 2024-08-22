@@ -1,5 +1,5 @@
 $theme-colors: (
-  'primary': #ff3f2d,
+  'primary': rgb(1 212 207),
   'secondary': #f4f5f7,
   'success': #2dce89,
   'info': #11cdef,
@@ -8,8 +8,10 @@ $theme-colors: (
   'light': #adb5bd,
   'dark': #212529,
 );
-
+$primary: rgb(1 212 207);
+@import '~bootswatch/dist/zephyr/variables';
 @import '~bootstrap/scss/bootstrap';
+@import '~bootswatch/dist/zephyr/bootswatch';
 
 *,
 *::before,
@@ -73,7 +75,8 @@ body {
 }
 
 .btn {
-  font-weight: 400;
+  font-weight: 500;
+  color: black;
 }
 
 .navbar-brand {
