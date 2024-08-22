@@ -50,10 +50,15 @@ export default function StudentNavbar() {
               variant='link'
               onClick={() => navigate('/services')}
             >
-              <i className='tim-icons icon-single-02' /> Services
+              Services
             </Nav.Link>
             <NavDropdown
-              title={`Hi ${userKeys ? userKeys.username : 'Guest'}!`}
+              title={
+                <span>
+                  <i className='tim-icons icon-single-02 me-2' />
+                  {userKeys?.username || userKeys?.email || 'Guest'}{' '}
+                </span>
+              }
               id='basic-nav-dropdown'
               align='end'
             >

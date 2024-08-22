@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Card,
-  CardHeader,
-  CardBody,
   Button,
-  Spinner,
-  Row,
+  Card,
+  CardBody,
+  CardHeader,
   Col,
+  Container,
   Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner,
+  UncontrolledDropdown,
 } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
+import useBreakpoint from '../hooks/useBreakpoint';
 
 function InternshipDetails() {
   const navigate = useNavigate();
@@ -31,9 +32,12 @@ function InternshipDetails() {
   const [matchingResult, setMatchingResult] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const token = localStorage.getItem('token');
+
   const user_id = JSON.parse(window.localStorage.getItem('login_state')).Id;
+
   const profile = JSON.parse(window.localStorage.getItem('login_state')).Profile
     ?.Jobs?.Seeker;
+
   const selectedStatesText =
     selectedStates.length > 0 ? selectedStates.join(', ') : 'Location';
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -277,43 +281,69 @@ function InternshipDetails() {
     </div>
   );
 
+  const breakpont = useBreakpoint();
+  const noOfCols = breakpont === 'xs' ? 1 : breakpont === 'sm' ? 2 : 3;
+
+  const dividedJobs = allJobs.reduce((acc, job, index) => {
+    const colIndex = index % noOfCols;
+    if (!acc[colIndex]) {
+      acc[colIndex] = [];
+    }
+    acc[colIndex].push(job);
+    return acc;
+  }, []);
+
   const renderJobCards = () => (
-    <div className='row'>
-      {displayedJobs.map((job, index) => (
-        <div className='col-lg-4 col-md-6 col-sm-12' key={index}>
-          <Card>
-            <CardHeader>
-              <h2>{job.job_title}</h2>
-            </CardHeader>
-            <CardBody>
-              <p>
-                <strong>Company:</strong> {job.company_name}
-              </p>
-              <p>
-                <strong>Location:</strong> {job.company_location}
-              </p>
-              <p>
-                <strong>Job Posted:</strong> {job.job_posted_time}
-              </p>
-              <a href={job.job_detail_url} target='_blank'>
-                Apply
-              </a>
-              <div className='mt-3'>
-                <Button
-                  color='primary'
-                  onClick={() => matchFunction(job.job_id)}
-                >
-                  Check Matching
-                </Button>
-                <Button color='info' onClick={() => checkATS(job.job_id)}>
-                  Check ATS
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
+    <Row>
+      {Object.values(dividedJobs).map((jobs, index) => (
+        <Col key={index} xs={12 / noOfCols}>
+          <div>
+            {jobs.map((job, index) => (
+              <Card key={index} className='mb-4'>
+                <CardHeader>
+                  <h2>{job.job_title}</h2>
+                </CardHeader>
+                <CardBody>
+                  <p>
+                    <strong>Company:</strong> {job.company_name}
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {job.company_location}
+                  </p>
+                  <p>
+                    <strong>Job Posted:</strong> {job.job_posted_time}
+                  </p>
+
+                  <div className='mt-3'>
+                    <a
+                      href={job.job_detail_url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      <Button color='primary'>Apply</Button>
+                    </a>
+                    <Button
+                      color='info'
+                      onClick={() => matchFunction(job.job_id)}
+                      className='ms-2'
+                    >
+                      Check Matching
+                    </Button>
+                    {/* <Button
+                color='info'
+                className='ms-2'
+                onClick={() => checkATS(job.job_id)}
+              >
+                Check ATS
+              </Button> */}
+                  </div>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        </Col>
       ))}
-    </div>
+    </Row>
   );
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
@@ -435,7 +465,7 @@ function InternshipDetails() {
             </Container>
           )}
         </section>
-        <div className='content'>
+        <div className='content py-4 h4 font-weight-bold'>
           {profile ? (
             allJobs.length === 0 ? (
               <div>

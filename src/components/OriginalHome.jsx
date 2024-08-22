@@ -69,6 +69,8 @@ export default function OriginalHome() {
           </h3>
           {/* get started */}
           <div className='d-flex justify-content-center'>
+            {/* post a job */}
+
             <Button
               className='btn-round btn-lg landing-button'
               color='primary'
@@ -80,16 +82,6 @@ export default function OriginalHome() {
               }
             >
               Get Started <i className='tim-icons icon-minimal-right' />
-            </Button>
-
-            {/* post a job */}
-            <Button
-              size='lg'
-              className='ms-4'
-              color='primary'
-              onClick={() => navigate('/jobs/poster')}
-            >
-              Post a Job <i className='tim-icons icon-minimal-right' />
             </Button>
           </div>
         </Container>

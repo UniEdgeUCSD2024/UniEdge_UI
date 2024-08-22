@@ -60,6 +60,9 @@ export default function LandingNavbar() {
                 Volunteering
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link href='#/jobs/poster'>
+              <Button variant='info'>Post a Job</Button>
+            </Nav.Link>
             <Nav.Link href='#/login'>
               <Button variant='primary'>Login</Button>
             </Nav.Link>

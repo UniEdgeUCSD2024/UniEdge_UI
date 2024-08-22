@@ -105,3 +105,43 @@ $placeholder-color: rgba(0, 0, 0, 0.773);
   /* Microsoft Edge */
   color: $placeholder-color;
 }
+
+.card-header {
+  color: black;
+}
+
+.staggered-grid {
+  display: grid;
+  grid-gap: 1rem;
+}
+
+/* Staggered grid items */
+.staggered-grid .card {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem; /* Spacing between rows */
+  width: 100%;
+}
+
+.staggered-grid .card:nth-child(odd) {
+  transform: translateY(10px); /* Adjust as needed for stagger effect */
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .staggered-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .staggered-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 769px) {
+  .staggered-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
