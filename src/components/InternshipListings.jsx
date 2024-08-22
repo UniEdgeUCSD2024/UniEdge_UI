@@ -335,7 +335,7 @@ function InternshipDetails() {
           </Button>
         </ModalFooter>
       </Modal>
-      <div className='content'>
+      <div className='content container'>
         <section className='section section-lg section-safe internship-dropdown'>
           {profile && (
             <Container>
@@ -464,7 +464,7 @@ function InternshipDetails() {
               <Button
                 color='info'
                 size='sm'
-                onClick={() => navigate('/studentprofile')}
+                onClick={() => navigate('/jobs/seeker/profile')}
               >
                 Profile
               </Button>{' '}
