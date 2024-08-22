@@ -15,8 +15,9 @@ import LandingPageUniEdge from './pages/LandingPageUniEdge';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LandingPageMentoring from './pages/LandingPageMentoring';
 import MentorRegisterPage from './pages/MentorRegister';
-import Jobs from './components/Jobs/Jobs';
+
 import Poster from './pages/Poster';
+import Services from './components/services/Services';
 
 const App = () => {
   return (
@@ -31,7 +32,7 @@ const App = () => {
           <Route path='/mentoringlanding' element={<LandingPageMentoring />} />
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path='/home' element={<Jobs />} />
+            <Route path='/home' element={<Services />} />
             <Route path='/jobs' element={<StudentHomePage />} />
             <Route path='/recruiter' element={<RecruiterHomePage />} />
             <Route path='/internships' element={<InternshipsPage />} />

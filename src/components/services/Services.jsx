@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 
-const Jobs = () => {
+const Services = () => {
   const cardData = [
     {
       title: 'Jobs',
@@ -47,7 +47,7 @@ const Jobs = () => {
       subtitle: 'Discover Your True Potential',
       bgColor: '#9BE6C1',
       link: '/#/mentorship',
-    }
+    },
   ];
 
   const { logout } = useContext(AuthContext);
@@ -93,8 +93,14 @@ const Jobs = () => {
           className='d-flex align-items-center justify-content-center p-4'
         >
           <div>
-            <h1><strong>Empower Your Future</strong></h1>
-            <p> Unlock opportunities, gain insights, and build meaningful connections. From career growth to personal development, we're here to support every step of your journey.
+            <h1>
+              <strong>Empower Your Future</strong>
+            </h1>
+            <p>
+              {' '}
+              Unlock opportunities, gain insights, and build meaningful
+              connections. From career growth to personal development, we're
+              here to support every step of your journey.
             </p>
           </div>
         </Col>
@@ -128,4 +134,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs;
+export default Services;

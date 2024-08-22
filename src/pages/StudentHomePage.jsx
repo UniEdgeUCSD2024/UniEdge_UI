@@ -1,12 +1,12 @@
-import React from "react";
-import StudentHome from "../components/student/Home";
-import StudentNavbar from "../components/Navbars/StudentNavbar";
+import React from 'react';
+import StudentNavbar from '../components/Navbars/StudentNavbar';
+import JobHome from '../components/student/JobHome';
 
 const StudentHomePage = () => {
   return (
     <>
       <StudentNavbar />
-      <StudentHome />
+      <JobHome />
     </>
   );
 };

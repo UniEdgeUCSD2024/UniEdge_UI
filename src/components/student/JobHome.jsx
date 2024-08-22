@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Spinner, Button, Col, Container, Row } from 'react-bootstrap';
 
-export default function StudentHome() {
+export default function JobHome() {
   const navigate = useNavigate();
   const { userKeys } = useContext(AuthContext);
   const [storedLoginState, setLoginState] = useState(null);
