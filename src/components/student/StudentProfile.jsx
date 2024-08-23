@@ -53,7 +53,7 @@ const ProfileForm = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user_id: loginState.id,
+            user_id: loginState.Id,
             linkedin_profile_url: linkedInUrl,
           }),
         }
