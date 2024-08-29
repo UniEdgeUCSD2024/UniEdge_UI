@@ -1,48 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Card,
   CardBody,
-  CardHeader,
   Col,
   Container,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Form,
   Row,
-  Spinner,
-  UncontrolledDropdown,
-} from 'reactstrap';
-import useBreakpoint from '../../hooks/useBreakpoint';
-import axios from 'axios';
+} from 'react-bootstrap';
 
 function InternshipDetails() {
-  const navigate = useNavigate();
   const [data, setData] = useState({});
-  const [jobState, setJobState] = useState({});
 
-  const [allJobs, setAllJobs] = useState([]);
-  const [displayedJobs, setDisplayedJobs] = useState([]);
+  const [selectedType, setSelectedType] = useState('');
   const [selectedStates, setSelectedStates] = useState([]);
   const [selectedDateFilter, setSelectedDateFilter] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [matchingResult, setMatchingResult] = useState(null);
-  const [showOverlay, setShowOverlay] = useState(false);
+
   const [modal, setModal] = useState(false);
-  const [modalContent, setModalContent] = useState('');
-  const [modalColor, setModalColor] = useState('');
   const token = localStorage.getItem('token');
-  const userId = JSON.parse(localStorage.getItem('login_state')).Id;
+
+  const user = JSON.parse(localStorage.getItem('login_state'));
 
   const profile = JSON.parse(localStorage.getItem('login_state')).Profile?.Jobs
     ?.Seeker;
+
   const states = [
     'Alabama',
     'Alaska',
@@ -99,16 +81,6 @@ function InternshipDetails() {
 
   const toggleModal = () => setModal(!modal);
 
-  useEffect(() => {
-    console.log('useeffect working');
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    console.log('Data:', data);
-    console.log('Job:', jobState);
-  }, [data, jobState]);
-
   async function fetchData() {
     try {
       const response = await axios.get(
@@ -125,108 +97,189 @@ function InternshipDetails() {
     }
   }
 
-  const handleSelectRole = (role) => {
+  useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [loading, setLoading] = useState(false);
+
+  const [jobDetails, setJobDetails] = useState({});
+  const [selectedJobType, setSelectedJobType] = useState('');
+
+  const fetchJobData = async ({ job, type }) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        'https://uniedge-prospect-functions.azurewebsites.net/fetchjobdescription',
+        {
+          Job_Id: job.id,
+          Job_Type: type,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setJobDetails({
+        ...job,
+        ...response.data,
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log(jobDetails);
+
+  const [markedAsInterested, setMarkedAsInterested] = useState(false);
+  const handleInterest = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        'https://uniedge-prospect-functions.azurewebsites.net/expressinterest',
+        {
+          Id: user.Id,
+          Email: user.Email,
+          Job_Id: jobDetails.id,
+          Job_Type: selectedJobType,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMarkedAsInterested(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className='wrapper mt-5 py-5'>
-      <Modal
-        isOpen={modal}
-        toggle={toggleModal}
-        contentClassName={{ color: modalColor }}
-      >
-        <ModalHeader toggle={toggleModal}>ATS Check</ModalHeader>
-        <ModalBody>{modalContent}</ModalBody>
-        <ModalFooter>
-          <Button color='secondary' onClick={toggleModal}>
-            Close
-          </Button>
-        </ModalFooter>
-      </Modal>
       <Container className='content'>
         {profile && (
           <Row className='mb-4'>
             <Col md='2'>
-              <UncontrolledDropdown>
-                <DropdownToggle caret>Internship Type</DropdownToggle>
-                <DropdownMenu>
-                  {[
-                    'BusinessAnalyst',
-                    'DataAnalyst',
-                    'DataEngineer',
-                    'DataScientist',
-                    'ProductManagement',
-                    'ProjectManagement',
-                    'Consultant',
-                    'HRManager',
-                  ].map((role) => (
-                    <DropdownItem key={role}>
-                      {role.replace(/([A-Z])/g, ' $1').trim()}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </UncontrolledDropdown>
+              <span className='pb-2'>Internship Type</span>
+              <Form.Select
+                onChange={(e) => setSelectedType(e.target.value)}
+                value={selectedType}
+              >
+                <option>Any</option>
+                {[
+                  'DataAnalyst',
+                  'BusinessAnalyst',
+                  'ProductManagement',
+                  'ProjectManagement',
+                  'DataScientist',
+                  'Consultant',
+                  'HRManager',
+                  'DataEngineer',
+                  'Internship',
+                  'Others',
+                ].map((role) => (
+                  <option key={role}>
+                    {role.replace(/([A-Z])/g, ' $1').trim()}
+                  </option>
+                ))}
+              </Form.Select>
             </Col>
-            <Col md='2'>
-              <UncontrolledDropdown>
-                <DropdownToggle caret>
-                  {selectedStates.length > 0
-                    ? selectedStates.join(', ')
-                    : 'Location'}
-                </DropdownToggle>
-                <DropdownMenu style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  {selectedStates.length > 0 && (
-                    <DropdownItem>
-                      <strong>Clear All</strong>
-                    </DropdownItem>
-                  )}
-                  {states.map((state) => (
-                    <DropdownItem key={state} toggle={false}>
-                      {state}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Col>
-            <Col md='2'>
-              <UncontrolledDropdown>
-                <DropdownToggle caret>
-                  {selectedDateFilter || 'Date Filter'}
-                </DropdownToggle>
-                <DropdownMenu>
-                  {[
-                    'Past 24 hours',
-                    '3 days ago',
-                    '5 days ago',
-                    '7 days ago',
-                  ].map((filter) => (
-                    <DropdownItem key={filter}>{filter}</DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Col>
+            <Col md='2'></Col>
+            <Col md='2'></Col>
           </Row>
         )}
       </Container>
 
       <Container>
         <Row>
-          <Col md='4' className='border-end '>
-            {Array.isArray(data.Internship) &&
-              data.Internship.map((e) => (
-                <JobCard
-                  job={e}
-                  setJobState={setJobState}
-                  token={token}
-                  selected={selectedRole.id === e.id}
-                />
-              ))}
+          <Col md='4' className='border-end'>
+            {Object.entries(data).map(([key, value]) => {
+              if (
+                selectedType &&
+                selectedType !== 'Any' &&
+                selectedType !== key
+              ) {
+                return null;
+              }
+              return (
+                <>
+                  {value.map((job) => {
+                    return (
+                      <div
+                        onClick={() => fetchJobData({ job, type: key })}
+                        key={job.id}
+                      >
+                        <JobCard
+                          job={job}
+                          token={token}
+                          selected={jobDetails.id === job.id}
+                          type={key}
+                        />
+                      </div>
+                    );
+                  })}
+                </>
+              );
+            })}
           </Col>
           <Col>
-            <Container>
-              <Row></Row>
-            </Container>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              jobDetails.id && (
+                <>
+                  <Container className='p-4 mb-1'>
+                    <div className='d-flex justify-content-between'>
+                      <div className='flex-column'>
+                        <div className='fw-light'>
+                          {jobDetails.company_name}
+                        </div>
+                        <h2 className='mb-0 fw-semibold'>
+                          {jobDetails.job_title}
+                        </h2>
+                        <p>{jobDetails.company_location}</p>
+                      </div>
+                      <div className='d-flex align-items-center'>
+                        {jobDetails.source === 'Uniedge' && (
+                          <Button
+                            color='success'
+                            className='mx-4 fw-bold'
+                            onClick={(e) => handleInterest(e)}
+                          >
+                            Interested
+                          </Button>
+                        )}
+                        {jobDetails.company_link && (
+                          <a href={jobDetails.company_link}>
+                            <Button color='success' className=' fw-bold'>
+                              Add on employer site
+                            </Button>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </Container>
+
+                  <Container className='border-bottom border-1 mb-3'>
+                    <h6 className='fw-bold'>Job Description</h6>
+                    <p>{jobDetails.job_description}</p>
+                  </Container>
+
+                  <Container className='border-bottom border-1'>
+                    <h5>Company Details</h5>
+                    <Row>
+                      <Col></Col>
+                      <Col></Col>
+                    </Row>
+                  </Container>
+                </>
+              )
+            )}
           </Col>
         </Row>
       </Container>
@@ -236,43 +289,16 @@ function InternshipDetails() {
 
 export default InternshipDetails;
 
-const JobCard = ({ job, setJobState, token, selected }) => {
-  const fetchJobData = async () => {
-    try {
-      const response = await axios.post(
-        'https://uniedge-prospect-functions.azurewebsites.net/fetchjobdescription',
-        {
-          job_id: job.id,
-          type: 'Internship',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  const handleClick = async (e) => {
-    e.preventDefault();
-    const data = await fetchJobData();
-    const jobDetails = {
-      ...job,
-      ...data,
-    };
-    setJobState(jobDetails);
-  };
-
+const JobCard = ({ job, selected }) => {
   return (
     <Card
-      className={` shadow-none p-2  cursor-pointer  ${
+      className={` shadow-none p-2   ${
         selected ? 'border border-1' : 'border-bottom border-0 rounded-0'
       } `}
-      onClick={(e) => handleClick(e)}
+      style={{
+        cursor: 'pointer',
+        backgroundColor: selected ? '#f5f5f5' : 'white',
+      }}
     >
       <CardBody>
         <p className='fw-light mb-4'>{job.company_name}</p>
