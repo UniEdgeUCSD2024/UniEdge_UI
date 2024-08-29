@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -31,72 +31,22 @@ function InternshipDetails() {
   const [selectedRole, setSelectedRole] = useState('');
   const [matchingResult, setMatchingResult] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
-  const token = localStorage.getItem('token');
-
-  const user_id = JSON.parse(window.localStorage.getItem('login_state')).Id;
-
-  const profile = JSON.parse(window.localStorage.getItem('login_state')).Profile
-    ?.Jobs?.Seeker;
-
-  const selectedStatesText =
-    selectedStates.length > 0 ? selectedStates.join(', ') : 'Location';
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modal, setModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [modalColor, setModalColor] = useState('');
-  const [infoMessage, setInfoMessage] = useState(''); // Initializing infoMessage and its setter
+  const token = localStorage.getItem('token');
+  const userId = JSON.parse(localStorage.getItem('login_state')).Id;
+
+  console.log(token)
+  console.log(userId)
+
+  const profile = JSON.parse(localStorage.getItem('login_state')).Profile?.Jobs?.Seeker;
   const states = [
-    'Alabama',
-    'Alaska',
-    'Arizona',
-    'Arkansas',
-    'California',
-    'Colorado',
-    'Connecticut',
-    'Delaware',
-    'District of Columbia',
-    'Florida',
-    'Georgia',
-    'Hawaii',
-    'Idaho',
-    'Illinois',
-    'Indiana',
-    'Iowa',
-    'Kansas',
-    'Kentucky',
-    'Louisiana',
-    'Maine',
-    'Montana',
-    'Nebraska',
-    'Nevada',
-    'New Hampshire',
-    'New Jersey',
-    'New Mexico',
-    'New York',
-    'North Carolina',
-    'North Dakota',
-    'Ohio',
-    'Oklahoma',
-    'Oregon',
-    'Maryland',
-    'Massachusetts',
-    'Michigan',
-    'Minnesota',
-    'Mississippi',
-    'Missouri',
-    'Pennsylvania',
-    'Rhode Island',
-    'South Carolina',
-    'South Dakota',
-    'Tennessee',
-    'Texas',
-    'Utah',
-    'Vermont',
-    'Virginia',
-    'Washington',
-    'West Virginia',
-    'Wisconsin',
-    'Wyoming',
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia',
+    'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+    'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Maryland', 'Massachusetts', 'Michigan',
+    'Minnesota', 'Mississippi', 'Missouri', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
   ];
 
   const toggleModal = () => setModal(!modal);
@@ -104,30 +54,29 @@ function InternshipDetails() {
   const fetchJobs = (role) => {
     setSelectedRole(role);
     setIsLoading(true);
-    const url = `https://uniedge-prospect-functions.azurewebsites.net/fetchjobdetails`;
-    fetch(url, {
+    fetch('https://uniedge-prospect-functions.azurewebsites.net/fetchjobdetails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        type: role,
-        user_id: user_id,
-      }),
+      body: JSON.stringify({ type: role, user_id: userId }),
     })
       .then((response) => response.json())
-      .then((response) => {
-        if (response.length === 0) {
-          setInfoMessage(
-            'Jobs are currently being updated. Hang tight, and try refreshing in a minute for fresh listings!'
-          );
+      .then((data) => {
+        if (data.length === 0) {
+          setModalContent('Jobs are currently being updated. Please try refreshing later.');
+          setModalColor('info');
+          toggleModal();
         } else {
-          setAllJobs(response);
-          setDisplayedJobs(response);
+          console.log(data);
+          setAllJobs(data);
+          setDisplayedJobs(data);
         }
       })
-      .catch((error) => console.error('Error loading job data:', error))
+      .catch((error) => {
+        console.error('Error loading job data:', error);
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -135,19 +84,10 @@ function InternshipDetails() {
     fetchJobs(role);
   };
 
-  const dateOptions = {
-    'Past 24 hours': 1,
-    '3 days ago': 3,
-    '5 days ago': 5,
-    '7 days ago': 7,
-  };
-
   const handleSelectState = (state) => {
-    const index = selectedStates.indexOf(state);
-    const newSelectedStates =
-      index >= 0
-        ? selectedStates.filter((s) => s !== state)
-        : [...selectedStates, state];
+    const newSelectedStates = selectedStates.includes(state)
+      ? selectedStates.filter((s) => s !== state)
+      : [...selectedStates, state];
     setSelectedStates(newSelectedStates);
     filterDisplayedJobs(newSelectedStates, selectedDateFilter);
   };
@@ -159,11 +99,11 @@ function InternshipDetails() {
 
   const filterDisplayedJobs = (states, dateFilter) => {
     let filteredJobs = allJobs;
-    if (states && states.length > 0) {
+    if (states.length > 0) {
       filteredJobs = filteredJobs.filter((job) => states.includes(job.state));
     }
     if (dateFilter) {
-      const daysLimit = dateOptions[dateFilter];
+      const daysLimit = { 'Past 24 hours': 1, '3 days ago': 3, '5 days ago': 5, '7 days ago': 7 }[dateFilter];
       filteredJobs = filteredJobs.filter((job) => {
         const daysAgo = parseInt(job.job_posted_time.split(' ')[0]) || 0;
         return daysAgo <= daysLimit;
@@ -186,332 +126,91 @@ function InternshipDetails() {
     }
   };
 
-  const checkATS = (jobId) => {
-    const jobDetails = allJobs.find((job) => job.job_id === jobId);
-    if (!jobDetails) {
-      alert('Job not found');
-      return;
-    }
-
-    const payload = {
-      user_id: user_id,
-      job_id: jobId,
-    };
-
-    fetch('https://uniedge-functions.azurewebsites.net/checkats', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        let message;
-        if (data.status === 'Pass') {
-          message = 'Your GPA looks good! Please have it on your Resume.';
-          setModalColor('green');
-        } else if (data.status === 'Fail') {
-          message =
-            "Even though you have a good GPA, it's not a perfect 4. You might consider whether to include it on your resume, depending on the specific requirements of the jobs you're applying for.";
-          setModalColor('red');
-        } else if (data.error) {
-          message =
-            'GPA not found for the user. Please re-upload your GPA on profile page';
-          setModalColor('red');
-        }
-        setModalContent(message);
-        toggleModal();
-      })
-      .catch((error) => {
-        console.error('Error checking ATS:', error);
-        setModalContent('Failed to connect to ATS. Please try again.');
-        setModalColor('red');
-        toggleModal();
-      });
-  };
-
   const clearStates = () => {
     setSelectedStates([]);
     setDisplayedJobs(allJobs);
   };
 
   const MatchingOverlay = () => (
-    <div
-      className='overlay'
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.75)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: '#282c34',
-          color: 'white',
-          padding: '20px',
-          borderRadius: '10px',
-          width: '80%',
-          maxWidth: '400px',
-        }}
-      >
-        <div className='matching-result'>
-          <h4>Matching Results</h4>
-          <p>Overall: {matchingResult?.Matching_Percentage}%</p>
-          <p>Experience: {matchingResult?.Experience}%</p>
-          <p>Qualifications: {matchingResult?.Qualifications}%</p>
-          <p>Technical Skills: {matchingResult?.Technical_Skills}%</p>
-          {matchingResult?.Non_Technical_Skills &&
-            matchingResult.Non_Technical_Skills !== 'NA' && (
-              <p>
-                Non-Technical Skills: {matchingResult.Non_Technical_Skills}%
-              </p>
-            )}
-          <Button onClick={() => setShowOverlay(false)}>Close</Button>
-        </div>
+    <div className='overlay'>
+      <div className='matching-result'>
+        <h4>Matching Results</h4>
+        <p>Overall: {matchingResult?.Matching_Percentage}%</p>
+        <p>Experience: {matchingResult?.Experience}%</p>
+        <p>Qualifications: {matchingResult?.Qualifications}%</p>
+        <p>Technical Skills: {matchingResult?.Technical_Skills}%</p>
+        {matchingResult?.Non_Technical_Skills && matchingResult.Non_Technical_Skills !== 'NA' && (
+          <p>Non-Technical Skills: {matchingResult.Non_Technical_Skills}%</p>
+        )}
+        <Button onClick={() => setShowOverlay(false)}>Close</Button>
       </div>
     </div>
   );
 
-  const breakpont = useBreakpoint();
-  const noOfCols = breakpont === 'xs' ? 1 : breakpont === 'sm' ? 2 : 3;
+  const breakpoint = useBreakpoint();
+  const noOfCols = breakpoint === 'xs' ? 1 : breakpoint === 'sm' ? 2 : 3;
 
   const dividedJobs = allJobs.reduce((acc, job, index) => {
     const colIndex = index % noOfCols;
-    if (!acc[colIndex]) {
-      acc[colIndex] = [];
-    }
+    if (!acc[colIndex]) acc[colIndex] = [];
     acc[colIndex].push(job);
     return acc;
   }, []);
 
-  const renderJobCards = () => (
-    <Row>
-      {Object.values(dividedJobs).map((jobs, index) => (
-        <Col key={index} xs={12 / noOfCols}>
-          <div>
-            {jobs.map((job, index) => (
-              <Card key={index} className='mb-4'>
-                <CardHeader>
-                  <h2>{job.job_title}</h2>
-                </CardHeader>
-                <CardBody>
-                  <p>
-                    <strong>Company:</strong> {job.company_name}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {job.company_location}
-                  </p>
-                  <p>
-                    <strong>Job Posted:</strong> {job.job_posted_time}
-                  </p>
-
-                  <div className='mt-3'>
-                    <a
-                      href={job.job_detail_url}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                    >
-                      <Button color='primary'>Apply</Button>
-                    </a>
-                    <Button
-                      color='info'
-                      onClick={() => matchFunction(job.job_id)}
-                      className='ms-2'
-                    >
-                      Check Matching
-                    </Button>
-                    {/* <Button
-                color='info'
-                className='ms-2'
-                onClick={() => checkATS(job.job_id)}
-              >
-                Check ATS
-              </Button> */}
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </Col>
-      ))}
-    </Row>
-  );
-
-  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
-
   return (
     <div className='wrapper mt-5 py-5'>
       {showOverlay && <MatchingOverlay />}
-      <Modal
-        isOpen={modal}
-        toggle={toggleModal}
-        contentClassName={{ color: modalColor }}
-      >
+      <Modal isOpen={modal} toggle={toggleModal} contentClassName={{ color: modalColor }}>
         <ModalHeader toggle={toggleModal}>ATS Check</ModalHeader>
         <ModalBody>{modalContent}</ModalBody>
         <ModalFooter>
-          <Button color='secondary' onClick={toggleModal}>
-            Close
-          </Button>
+          <Button color='secondary' onClick={toggleModal}>Close</Button>
         </ModalFooter>
       </Modal>
-      <div className='content container'>
-        <section className='section section-lg section-safe internship-dropdown'>
-          {profile && (
-            <Container>
-              <Row>
-                <Col md='2'>
-                  <UncontrolledDropdown>
-                    <DropdownToggle caret data-toggle='dropdown'>
-                      Internship Type
-                    </DropdownToggle>
-                    <DropdownMenu>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('BusinessAnalyst')}
-                      >
-                        Business Analyst
+      <Container className='content'>
+        {profile && (
+          <Row className='mb-4'>
+            <Col md='2'>
+              <UncontrolledDropdown>
+                <DropdownToggle caret>Internship Type</DropdownToggle>
+                <DropdownMenu>
+                  {['BusinessAnalyst', 'DataAnalyst', 'DataEngineer', 'DataScientist', 'ProductManagement', 'ProjectManagement', 'Consultant', 'HRManager']
+                    .map((role) => (
+                      <DropdownItem key={role} onClick={() => handleSelectRole(role)}>
+                        {role.replace(/([A-Z])/g, ' $1').trim()}
                       </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('DataAnalyst')}
-                      >
-                        Data Analyst
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('DataEngineer')}
-                      >
-                        Data Engineer
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('DataScientist')}
-                      >
-                        Data Scientist
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('ProductManagement')}
-                      >
-                        Product Management
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('ProjectManagement')}
-                      >
-                        Project Management
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('Consultant')}
-                      >
-                        Consultant
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={() => handleSelectRole('HRManager')}
-                      >
-                        HRManager
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </Col>
-                <Col md='2'>
-                  <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                    <DropdownToggle caret>{selectedStatesText}</DropdownToggle>
-                    <DropdownMenu
-                      style={{ maxHeight: '300px', overflowY: 'auto' }}
-                    >
-                      {selectedStates.length > 0 && (
-                        <DropdownItem onClick={clearStates}>
-                          <strong>Clear All</strong>
-                        </DropdownItem>
-                      )}
-                      {states.map((state) => (
-                        <DropdownItem
-                          key={state}
-                          toggle={false}
-                          onClick={() => handleSelectState(state)}
-                        >
-                          <input
-                            type='checkbox'
-                            checked={selectedStates.includes(state)}
-                            readOnly
-                          />{' '}
-                          {state}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                </Col>
-                <Col md='2'>
-                  <UncontrolledDropdown>
-                    <DropdownToggle caret>Date Posted</DropdownToggle>
-                    <DropdownMenu>
-                      {Object.entries(dateOptions).map(([key, _]) => (
-                        <DropdownItem
-                          key={key}
-                          onClick={() => handleSelectDateFilter(key)}
-                        >
-                          {key}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </Col>
-              </Row>
-            </Container>
-          )}
-        </section>
-        <div className='content py-4 h4 font-weight-bold'>
-          {profile ? (
-            allJobs.length === 0 ? (
-              <div>
-                {infoMessage ? (
-                  <p className='info-message'>{infoMessage}</p>
-                ) : (
-                  <p className='role-not-clicked'>
-                    Find the latest internship opportunities tailored to your
-                    dream role by selecting your preferred position from the
-                    dropdown menu above and begin your job search journey with
-                    us.
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className='role-clicked'>
-                Please find all the latest {selectedRole} internships in the
-                USA, and take your first step at job search by applying.
-              </p>
-            )
-          ) : (
-            <p className='role-clicked'>
-              To view internship listings, please ensure your profile is fully
-              updated on the{' '}
-              <Button
-                color='info'
-                size='sm'
-                onClick={() => navigate('/jobs/seeker/profile')}
-              >
-                Profile
-              </Button>{' '}
-              page.
-            </p>
-          )}
-        </div>
-        <div id='jobs-container' className='jobs-container'>
-          {isLoading ? (
-            <div className='text-center'>
-              <Spinner style={{ width: '3rem', height: '3rem' }} />
-              <p> {selectedRole} Internships are loading...</p>
-            </div>
-          ) : (
-            renderJobCards()
-          )}
-        </div>
-      </div>
+                    ))}
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            </Col>
+            <Col md='2'>
+              <Dropdown>
+                <DropdownToggle caret>{selectedStates.length > 0 ? selectedStates.join(', ') : 'Location'}</DropdownToggle>
+                <DropdownMenu style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                  {selectedStates.length > 0 && <DropdownItem onClick={clearStates}><strong>Clear All</strong></DropdownItem>}
+                  {states.map((state) => (
+                    <DropdownItem key={state} toggle={false} onClick={() => handleSelectState(state)}>
+                      {state}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+            <Col md='2'>
+              <Dropdown>
+                <DropdownToggle caret>{selectedDateFilter || 'Date Filter'}</DropdownToggle>
+                <DropdownMenu>
+                  {['Past 24 hours', '3 days ago', '5 days ago', '7 days ago'].map((filter) => (
+                    <DropdownItem key={filter} onClick={() => handleSelectDateFilter(filter)}>
+                      {filter}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+          </Row>
+        )}
+      </Container>
     </div>
   );
 }
