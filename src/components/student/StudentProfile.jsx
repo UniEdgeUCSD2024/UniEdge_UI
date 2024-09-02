@@ -25,7 +25,7 @@ const ProfileForm = () => {
   const loginState = JSON.parse(localStorage.getItem('login_state'));
 
   const [profile, setProfile] = useState({
-    firstName: loginState.Profile.FirstName || '',
+    firstName: loginState?.Profile?.FirstName || '',
     lastName: '',
     experience: [],
     education: [],
@@ -245,10 +245,14 @@ const ProfileForm = () => {
               {loading ? <Spinner animation='border' size='sm' /> : 'Upload'}
             </Button>
           </InputGroup>
-          <h4>Upload Your Resume/CV</h4>
-          <Form.Group controlId='formFile'>
-            <Form.Control type='file' onChange={handleResumeUpload} />
-          </Form.Group>
+          {serviceName === 'Jobs' && (
+            <>
+              <h4>Upload Your Resume/CV</h4>
+              <Form.Group controlId='formFile'>
+                <Form.Control type='file' onChange={handleResumeUpload} />
+              </Form.Group>
+            </>
+          )}
         </Col>
         <Col xs={12} md={6}>
           <h4>Profile Information</h4>

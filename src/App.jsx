@@ -19,45 +19,56 @@ import MentorRegisterPage from './pages/MentorRegister';
 import Poster from './pages/Poster';
 import Services from './components/services/Services';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Mentorship from './components/Mentorship/Mentorship';
+import ThemeProvider from './components/styles/ThemeProvider';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router basename={process.env.PUBLIC_URL}>
-        <AuthProvider>
-          <Routes>
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/register' element={<RegisterPage />} />
-            <Route path='/' element={<LandingPage />} />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router basename={process.env.PUBLIC_URL}>
+          <AuthProvider>
+            <Routes>
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/register' element={<RegisterPage />} />
+              <Route path='/' element={<LandingPage />} />
 
-            <Route path='/uniedge' element={<LandingPageUniEdge />} />
-            <Route
-              path='/mentoringlanding'
-              element={<LandingPageMentoring />}
-            />
-            <Route path='/:service/poster' element={<Poster />} />
-            {/* Protected Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path='/home' element={<Services />} />
-              <Route path='/jobs' element={<StudentHomePage />} />
-              <Route path='/recruiter' element={<RecruiterHomePage />} />
-              <Route path='/internships' element={<InternshipsPage />} />
-              <Route path='/services' element={<ServicesPage />} />
+              <Route path='/uniedge' element={<LandingPageUniEdge />} />
               <Route
-                path='/:service/:role/profile'
-                element={<StudentProfilePage />}
+                path='/mentoringlanding'
+                element={<LandingPageMentoring />}
               />
+              <Route path='/:service/poster' element={<Poster />} />
+              {/* Protected Routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path='/home' element={<Services />} />
+                <Route path='/jobs' element={<StudentHomePage />} />
+                <Route path='/mentorship' element={<Mentorship />} />
+                <Route path='/recruiter' element={<RecruiterHomePage />} />
+                <Route path='/internships' element={<InternshipsPage />} />
+                <Route path='/services' element={<ServicesPage />} />
+                <Route
+                  path='/:service/:role/profile'
+                  element={<StudentProfilePage />}
+                />
 
-              <Route path='/volunteer' element={<VolunteerPage />} />
-              <Route path='/forgotpassword' element={<ForgotPasswordPage />} />
-              <Route path='/mentorregister' element={<MentorRegisterPage />} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </Router>
-    </QueryClientProvider>
+                <Route path='/volunteer' element={<VolunteerPage />} />
+                <Route
+                  path='/forgotpassword'
+                  element={<ForgotPasswordPage />}
+                />
+                <Route
+                  path='/mentorregister'
+                  element={<MentorRegisterPage />}
+                />
+              </Route>
+            </Routes>
+          </AuthProvider>
+        </Router>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

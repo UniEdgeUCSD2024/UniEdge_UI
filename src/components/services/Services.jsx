@@ -22,7 +22,7 @@ const Services = () => {
       title: 'Mentorship',
       subtitle: 'Guide Your Growth Journey',
       bgColor: '#9BC9FF',
-      link: '/#/compete',
+      link: '/#/mentorship',
     },
     {
       title: 'Life Coaching',
