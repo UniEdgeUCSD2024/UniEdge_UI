@@ -35,7 +35,7 @@ const MentorProfile = () => {
   const loginState = JSON.parse(localStorage.getItem('login_state'));
 
   const [profile, setProfile] = useState({
-    firstName: loginState.Profile.FirstName || '',
+    firstName: loginState?.Profile?.FirstName || '',
     lastName: '',
     headline: '',
     about: '',
@@ -155,6 +155,7 @@ const MentorProfile = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (!data) return;
         setProfile((prev) => ({
           ...prev,
           firstName: data.FirstName || '',
