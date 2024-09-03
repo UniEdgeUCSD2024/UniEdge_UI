@@ -1,19 +1,28 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+
+import { Download, SaveOutlined } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  InputGroup,
-  Spinner,
-  Card,
   Alert,
-} from 'react-bootstrap';
-import { FaMinus } from 'react-icons/fa';
-import { AuthContext } from '../../context/AuthContext';
-import { useParams } from 'react-router-dom';
+  Box,
+  Checkbox,
+  Chip,
+  Container,
+  FormControlLabel,
+  Grid2,
+  LinearProgress,
+  MenuItem,
+  Select,
+  Slider,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { capitalize } from 'lodash';
+import { useParams } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import ExperienceList from './ExperienceField';
+import EducationList from './EducationField';
 
 const MentorProfile = () => {
   const [linkedInUrl, setLinkedInUrl] = useState('');
@@ -51,7 +60,7 @@ const MentorProfile = () => {
     try {
       setError('');
       const response = await fetch(
-        'https://uniedge-prospect-functions.azurewebsites.net/linkedinprofile',
+        'https://uniedge-prospect-functions.azurewebsites.net/mentorlinkedin',
         {
           method: 'POST',
           headers: {
@@ -73,8 +82,25 @@ const MentorProfile = () => {
           headline: data.profile.headline || '',
           about: data.profile.about || '',
           skills: data.profile.skills ? data.profile.skills.join(', ') : '',
-          experience: data.profile.experience || [],
-          education: data.profile.education || [],
+          experience: (data.profile.experience || []).map((exp) => ({
+            Title: exp.title,
+            CompanyName: exp.company,
+            timePeriod: {
+              startDate: exp.timePeriod.startDate,
+              endDate: exp.timePeriod.endDate,
+            },
+            Description: exp.description,
+          })),
+
+          education: (data.profile.education || []).map((edu) => ({
+            Degree: edu.degreeName,
+            FieldOfStudy: edu.fieldOfStudy,
+            University: edu.university,
+            timePeriod: {
+              startDate: edu.timePeriod.startDate,
+              endDate: edu.timePeriod.endDate,
+            },
+          })),
           categories: profile.categories, // Retain selected categories
           pricing: profile.pricing, // Retain current pricing
           freeSession: profile.freeSession, // Retain free session value
@@ -88,57 +114,79 @@ const MentorProfile = () => {
     }
   };
 
-  const handleInputChange = (e, section, index, field) => {
-    const updatedSection = [...profile[section]];
-    updatedSection[index][field] = e.target.value;
-    setProfile({ ...profile, [section]: updatedSection });
-  };
-
-  const handleAddField = (section) => {
-    const newField =
-      section === 'experience'
-        ? {
-            title: '',
-            companyName: '',
-            startDate: '',
-            endDate: '',
-            description: '',
-          }
-        : {
-            degreeName: '',
-            fieldOfStudy: '',
-            schoolName: '',
-            startDate: '',
-            endDate: '',
-          };
-    setProfile({ ...profile, [section]: [...profile[section], newField] });
-  };
-
-  const handleRemoveField = (section, index) => {
-    const updatedSection = profile[section].filter((_, i) => i !== index);
-    setProfile({ ...profile, [section]: updatedSection });
-  };
-
-  const handleCategoriesChange = (e) => {
-    const selectedCategories = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setProfile({ ...profile, categories: selectedCategories });
-  };
-
   const handlePricingChange = (e) => {
     setProfile({ ...profile, pricing: e.target.value });
   };
 
   const handleFreeSessionChange = (e) => {
-    setProfile({ ...profile, freeSession: e.target.value });
+    setProfile({ ...profile, freeSession: e.target.checked ? 'Yes' : 'No' });
   };
 
   const [submitting, setSubmitting] = useState(false);
+  const [fetchingProfile, setFetchingProfile] = useState(false);
+  useEffect(() => {
+    // POST  https://uniedge-prospect-functions.azurewebsites.net/fetchprofile HTTP/1.1
+    // Content-Type: application/json
+
+    // {
+    //     "Id": "1038",
+    //     "Email": "testuser101@gmail.com",
+    //     "Profile":{
+    //         "jobs": {"Seeker": true}
+    //     }
+    // }
+
+    const loginState = JSON.parse(localStorage.getItem('login_state'));
+    const token = localStorage.getItem('token');
+    setFetchingProfile(true);
+    fetch('https://uniedge-prospect-functions.azurewebsites.net/fetchprofile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        Id: loginState.Id,
+        Email: loginState.Email,
+        Profile: {
+          jobs: { Seeker: true },
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProfile((prev) => ({
+          ...prev,
+          firstName: data.FirstName || '',
+          lastName: data.LastName || '',
+          headline: data.Headline || '',
+          about: data.About || '',
+          skills: data.Skills || '',
+          experience: data.Experience || [],
+          education: data.Education || [],
+          categories: data.Categories || [],
+          pricing: data.Pricing || 50,
+          freeSession: data.FreeSession || 'Yes',
+        }));
+      })
+      .finally(() => {
+        setFetchingProfile(false);
+      });
+  }, [userKeys]);
 
   const handleSubmitProfile = async () => {
-    const { firstName, lastName, headline, about, skills, experience, education, categories, pricing, freeSession } = profile;
+    const {
+      firstName,
+      lastName,
+      headline,
+      about,
+      skills,
+      experience,
+      education,
+      categories,
+      pricing,
+      freeSession,
+    } = profile;
 
     if (!firstName || !lastName) {
       alert('Please fill in the first name and last name fields.');
@@ -155,20 +203,22 @@ const MentorProfile = () => {
       Headline: headline,
       About: about,
       Skills: skills,
-      Experience: experience.map((exp) => ({
-        Title: exp.title,
-        Company: exp.companyName,
-        StartDate: exp.timePeriod?.startDate || '',
-        EndDate: exp.timePeriod?.endDate || '',
-        Description: exp.description,
-      })),
-      Education: education.map((edu) => ({
-        Degree: edu.degreeName,
-        FieldOfStudy: edu.fieldOfStudy,
-        University: edu.schoolName,
-        StartDate: edu.timePeriod?.startDate || '',
-        EndDate: edu.timePeriod?.endDate || '',
-      })),
+      Experience:
+        experience.map((exp) => ({
+          Title: exp.Title,
+          Company: exp.CompanyName,
+          StartDate: exp.timePeriod?.startDate || '',
+          EndDate: exp.timePeriod?.endDate || '',
+          Description: exp.description,
+        })) ?? [],
+      Education:
+        education.map((edu) => ({
+          Degree: edu.DegreeName,
+          FieldOfStudy: edu.FieldOfStudy,
+          University: edu.University,
+          StartDate: edu.timePeriod?.startDate || '',
+          EndDate: edu.timePeriod?.endDate || '',
+        })) ?? [],
       Categories: categories,
       Pricing: pricing,
       FreeSession: freeSession,
@@ -209,321 +259,200 @@ const MentorProfile = () => {
 
   return (
     <Container className='py-5 mt-5'>
-      <Row>
-        <Col xs={12}>
-          {error && <Alert variant='danger'>{error}</Alert>}
-          {success && (
-            <Alert variant='success'>
-              Your profile has been successfully saved.
-            </Alert>
-          )}
-        </Col>
-        <Col xs={12} md={6}>
-          <h4>Import Profile From LinkedIn</h4>
-          <InputGroup className='mb-3'>
-            <Form.Control
-              placeholder='LinkedIn Profile URL'
-              value={linkedInUrl}
-              onChange={handleLinkedInUrlChange}
-            />
-            <Button
-              variant='primary'
-              onClick={handleUploadLinkedInProfile}
-              disabled={loading}
-            >
-              {loading ? <Spinner animation='border' size='sm' /> : 'Import'}
-            </Button>
-          </InputGroup>
-          <h4 className='mt-4'>Profile Information</h4>
-          <Form className='mt-3'>
-            <Form.Group controlId='formHeadline'>
-              <Form.Label>Headline</Form.Label>
-              <Form.Control
-                type='text'
-                value={profile.headline}
-                onChange={(e) =>
-                  setProfile({ ...profile, headline: e.target.value })
-                }
-              />
-            </Form.Group>
-
-            <Form.Group controlId='formAbout'>
-              <Form.Label>About</Form.Label>
-              <Form.Control
-                as='textarea'
-                rows={3}
-                value={profile.about}
-                onChange={(e) =>
-                  setProfile({ ...profile, about: e.target.value })
-                }
-              />
-            </Form.Group>
-
-            <Form.Group controlId='formFirstName'>
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type='text'
-                value={profile.firstName}
-                onChange={(e) =>
-                  setProfile({ ...profile, firstName: e.target.value })
-                }
-              />
-            </Form.Group>
-
-            <Form.Group controlId='formLastName'>
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type='text'
-                value={profile.lastName}
-                onChange={(e) =>
-                  setProfile({ ...profile, lastName: e.target.value })
-                }
-              />
-            </Form.Group>
-
-            <Form.Group controlId='formSkills'>
-              <Form.Label>Skills</Form.Label>
-              <Form.Control
-                type='text'
-                value={profile.skills}
-                onChange={(e) =>
-                  setProfile({ ...profile, skills: e.target.value })
-                }
-              />
-            </Form.Group>
-          </Form>
-        </Col>
-        <Col xs={12} md={6}>
-          <Form.Group controlId='formCategories'>
-            <Form.Label>Area of Expertise</Form.Label>
-            <Form.Control
-              as='select'
-              multiple
-              value={profile.categories}
-              onChange={handleCategoriesChange}
-              style={{ height: 'auto', display: 'block' }}
-            >
-              <option value="Career Guidance">Career Guidance</option>
-              <option value="Leadership">Leadership</option>
-              <option value="Technology">Technology</option>
-              <option value="Entrepreneurship">Entrepreneurship</option>
-              <option value="Personal Development">Personal Development</option>
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId='formPricing'>
-            <Form.Label>Pricing ($)</Form.Label>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span>$0</span>
-              <Form.Control
-                type='range'
-                min='0'
-                max='100'
-                value={profile.pricing}
-                onChange={handlePricingChange}
-                style={{ flex: 1, margin: '0 10px', background: 'linear-gradient(to right, #0d6efd, #0d6efd 50%, #dee2e6 50%)', height: '8px', borderRadius: '5px' }}
-              />
-              <span>$100</span>
-            </div>
-            <Form.Text className='text-muted'>
-              {`Current: $${profile.pricing}`}
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group controlId='formFreeSession'>
-            <Form.Label>Free Session</Form.Label>
-            <Form.Control
-              as='select'
-              value={profile.freeSession}
-              onChange={handleFreeSessionChange}
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </Form.Control>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row className='mt-4'>
-        <Col xs={12}>
-          <h5>Work Experience</h5>
-          {profile.experience.map((exp, index) => (
-            <Card key={index} className='mb-3'>
-              <Card.Header>
-                <Card.Title className='align-items-center d-flex justify-content-between'>
-                  Experience {index + 1}
-                  <Button
-                    variant='link'
-                    onClick={() => handleRemoveField('experience', index)}
-                    className='float-end'
-                  >
-                    <FaMinus />
-                  </Button>
-                </Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Form.Group controlId={`formExperienceTitle${index}`}>
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type='text'
-                    value={exp.title}
-                    onChange={(e) =>
-                      handleInputChange(e, 'experience', index, 'title')
-                    }
-                  />
-                </Form.Group>
-                <Form.Group controlId={`formExperienceCompany${index}`}>
-                  <Form.Label>Company</Form.Label>
-                  <Form.Control
-                    type='text'
-                    value={exp.companyName}
-                    onChange={(e) =>
-                      handleInputChange(e, 'experience', index, 'companyName')
-                    }
-                  />
-                </Form.Group>
-                <Row>
-                  <Col>
-                    <Form.Group controlId={`formExperienceStartDate${index}`}>
-                      <Form.Label>Start Date</Form.Label>
-                      <Form.Control
-                        type='text'
-                        value={exp.startDate}
-                        onChange={(e) =>
-                          handleInputChange(e, 'experience', index, 'startDate')
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId={`formExperienceEndDate${index}`}>
-                      <Form.Label>End Date</Form.Label>
-                      <Form.Control
-                        type='text'
-                        value={exp.endDate}
-                        onChange={(e) =>
-                          handleInputChange(e, 'experience', index, 'endDate')
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Form.Group controlId={`formExperienceDescription${index}`}>
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as='textarea'
-                    rows={3}
-                    value={exp.description}
-                    onChange={(e) =>
-                      handleInputChange(e, 'experience', index, 'description')
-                    }
-                  />
-                </Form.Group>
-              </Card.Body>
-            </Card>
-          ))}
-          <Button
-            variant='outline-primary'
-            onClick={() => handleAddField('experience')}
+      {fetchingProfile ? (
+        <Stack>
+          <Typography variant='h5'>Fetching Profile...</Typography>
+          <LinearProgress />
+        </Stack>
+      ) : (
+        <Grid2 container spacing={4}>
+          <Grid2 item size={12}>
+            {error && <Alert variant='danger'>{error}</Alert>}
+            {success && (
+              <Alert variant='success'>
+                Your profile has been successfully saved.
+              </Alert>
+            )}
+          </Grid2>
+          <Grid2
+            item
+            size={{
+              xs: 12,
+              md: 6,
+            }}
           >
-            Add Experience
-          </Button>
-
-          <h5 className='mt-4'>Education</h5>
-          {profile.education.map((edu, index) => (
-            <Card key={index} className='mb-3'>
-              <Card.Header>
-                <Card.Title className='align-items-center d-flex justify-content-between'>
-                  Education {index + 1}
-                  <Button
-                    variant='link'
-                    onClick={() => handleRemoveField('education', index)}
-                    className='float-end'
+            <Stack spacing={4}>
+              <Stack spacing={1}>
+                <Typography variant='h5'>
+                  Import Profile From LinkedIn
+                </Typography>
+                <Stack direction={'row'}>
+                  <TextField
+                    value={linkedInUrl}
+                    onChange={handleLinkedInUrlChange}
+                    fullWidth
+                    placeholder='Enter your LinkedIn profile URL'
+                    sx={{
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                    }}
+                  />
+                  <LoadingButton
+                    variant='contained'
+                    onClick={handleUploadLinkedInProfile}
+                    disabled={loading}
+                    loading={loading}
+                    startIcon={<Download />}
+                    sx={{
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                    }}
                   >
-                    <FaMinus />
-                  </Button>
-                </Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Form.Group controlId={`formEducationDegree${index}`}>
-                  <Form.Label>Degree</Form.Label>
-                  <Form.Control
-                    type='text'
-                    value={edu.degreeName}
-                    onChange={(e) =>
-                      handleInputChange(e, 'education', index, 'degreeName')
-                    }
-                  />
-                </Form.Group>
-                <Form.Group controlId={`formEducationField${index}`}>
-                  <Form.Label>Field of Study</Form.Label>
-                  <Form.Control
-                    type='text'
-                    value={edu.fieldOfStudy}
-                    onChange={(e) =>
-                      handleInputChange(e, 'education', index, 'fieldOfStudy')
-                    }
-                  />
-                </Form.Group>
-                <Form.Group controlId={`formEducationSchool${index}`}>
-                  <Form.Label>School</Form.Label>
-                  <Form.Control
-                    type='text'
-                    value={edu.schoolName}
-                    onChange={(e) =>
-                      handleInputChange(e, 'education', index, 'schoolName')
-                    }
-                  />
-                </Form.Group>
-                <Row>
-                  <Col>
-                    <Form.Group controlId={`formEducationStartDate${index}`}>
-                      <Form.Label>Start Date</Form.Label>
-                      <Form.Control
-                        type='text'
-                        value={edu.startDate}
-                        onChange={(e) =>
-                          handleInputChange(e, 'education', index, 'startDate')
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId={`formEducationEndDate${index}`}>
-                      <Form.Label>End Date</Form.Label>
-                      <Form.Control
-                        type='text'
-                        value={edu.endDate}
-                        onChange={(e) =>
-                          handleInputChange(e, 'education', index, 'endDate')
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          ))}
-          <Button
-            variant='outline-primary'
-            onClick={() => handleAddField('education')}
-          >
-            Add Education
-          </Button>
+                    Import
+                  </LoadingButton>
+                </Stack>
+              </Stack>
 
-          <div className='mt-4'>
-            <Button
-              variant='success'
-              className='mt-4 text-white'
-              onClick={handleSubmitProfile}
-              disabled={submitting || error}
-            >
-              <i className='fas fa-save me-2' />
-              {submitting ? 'Saving...' : 'Save Profile'}
-            </Button>
-          </div>
-        </Col>
-      </Row>
+              <Stack spacing={1}>
+                <Typography variant='h5'>Profile Information</Typography>
+
+                {/* headline */}
+                <TextField
+                  label='Headline'
+                  value={profile.headline}
+                  onChange={(e) =>
+                    setProfile({ ...profile, headline: e.target.value })
+                  }
+                  fullWidth
+                />
+
+                {/* about */}
+                <TextField
+                  label='About'
+                  value={profile.about}
+                  onChange={(e) =>
+                    setProfile({ ...profile, about: e.target.value })
+                  }
+                  fullWidth
+                  multiline
+                  rows={4}
+                />
+
+                <Stack direction={'row'} spacing={1}>
+                  <TextField
+                    label='First Name'
+                    value={profile.firstName}
+                    onChange={(e) =>
+                      setProfile({ ...profile, firstName: e.target.value })
+                    }
+                    fullWidth
+                  />
+                  <TextField
+                    label='Last Name'
+                    value={profile.lastName}
+                    onChange={(e) =>
+                      setProfile({ ...profile, lastName: e.target.value })
+                    }
+                    fullWidth
+                  />
+                </Stack>
+
+                <TextField
+                  label='Skills'
+                  value={profile.skills}
+                  onChange={(e) =>
+                    setProfile({ ...profile, skills: e.target.value })
+                  }
+                  fullWidth
+                />
+              </Stack>
+
+              <ExperienceList
+                experiences={profile.experience}
+                setExperiences={(e) =>
+                  setProfile((prev) => ({
+                    ...prev,
+                    experience: e,
+                  }))
+                }
+              />
+
+              <EducationList
+                educations={profile.education}
+                setEducations={(e) =>
+                  setProfile((prev) => ({ ...prev, education: e }))
+                }
+              />
+            </Stack>
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+            <Stack spacing={2}>
+              <Stack spacing={1}>
+                <Typography>Area of Experise</Typography>
+                <Select
+                  multiple
+                  value={profile.categories}
+                  onChange={(e) =>
+                    setProfile({ ...profile, categories: e.target.value })
+                  }
+                  fullWidth
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  <MenuItem value='Career Guidance'>Career Guidance</MenuItem>
+                  <MenuItem value='Leadership'>Leadership</MenuItem>
+                  <MenuItem value='Technology'>Technology</MenuItem>
+                  <MenuItem value='Entrepreneurship'>Entrepreneurship</MenuItem>
+                  <MenuItem value='Personal Development'>
+                    Personal Development
+                  </MenuItem>
+                </Select>
+              </Stack>
+              <Stack spacing={1}>
+                <Typography>Pricing: ${profile.pricing}</Typography>
+                <Slider
+                  min={0}
+                  max={100}
+                  value={profile.pricing}
+                  onChange={handlePricingChange}
+                />
+              </Stack>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={profile.freeSession === 'Yes'}
+                    onChange={handleFreeSessionChange}
+                    value='Yes'
+                  >
+                    Yes
+                  </Checkbox>
+                }
+                label='Free Session'
+              />
+            </Stack>
+          </Grid2>{' '}
+          <LoadingButton
+            variant='contained'
+            color='secondary'
+            onClick={handleSubmitProfile}
+            disabled={submitting || error}
+            loading={submitting}
+            startIcon={<SaveOutlined />}
+          >
+            Save Profile
+          </LoadingButton>
+        </Grid2>
+      )}
     </Container>
   );
 };

@@ -21,6 +21,7 @@ import Services from './components/services/Services';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Mentorship from './components/Mentorship/Mentorship';
 import ThemeProvider from './components/styles/ThemeProvider';
+import MentorProfilePage from './pages/MentorProfilePage';
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,11 @@ const App = () => {
                 <Route path='/recruiter' element={<RecruiterHomePage />} />
                 <Route path='/internships' element={<InternshipsPage />} />
                 <Route path='/services' element={<ServicesPage />} />
+
+                <Route
+                  path='/mentorship/mentor/profile'
+                  element={<MentorProfilePage />}
+                />
                 <Route
                   path='/:service/:role/profile'
                   element={<StudentProfilePage />}
