@@ -76,13 +76,15 @@ const MentorProfile = () => {
       const data = await response.json();
 
       if (data.profile) {
-        setProfile({
-          firstName: data.profile.firstName || '',
-          lastName: data.profile.lastName || '',
-          headline: data.profile.headline || '',
-          about: data.profile.about || '',
+        setProfile((prev) => ({
+          ...prev,
+          LinkedInUrl: linkedInUrl,
+          firstName: data.profile.firstName,
+          lastName: data.profile.lastName,
+          headline: data.profile.headline,
+          about: data.profile.about,
           skills: data.profile.skills ? data.profile.skills.join(', ') : '',
-          experience: (data.profile.experience || []).map((exp) => ({
+          experience: data.profile.experience?.map?.((exp) => ({
             Title: exp.title,
             CompanyName: exp.company,
             timePeriod: {
@@ -92,7 +94,7 @@ const MentorProfile = () => {
             Description: exp.description,
           })),
 
-          education: (data.profile.education || []).map((edu) => ({
+          education: data.profile.education?.map?.((edu) => ({
             Degree: edu.degreeName,
             FieldOfStudy: edu.fieldOfStudy,
             University: edu.university,
@@ -104,7 +106,7 @@ const MentorProfile = () => {
           categories: profile.categories, // Retain selected categories
           pricing: profile.pricing, // Retain current pricing
           freeSession: profile.freeSession, // Retain free session value
-        });
+        }));
       }
     } catch (error) {
       console.error('Error uploading LinkedIn profile:', error);
@@ -138,6 +140,7 @@ const MentorProfile = () => {
 
     const loginState = JSON.parse(localStorage.getItem('login_state'));
     const token = localStorage.getItem('token');
+
     setFetchingProfile(true);
     fetch('https://uniedge-prospect-functions.azurewebsites.net/fetchprofile', {
       method: 'POST',
@@ -175,80 +178,95 @@ const MentorProfile = () => {
       });
   }, [userKeys]);
 
+  const [errors, setErrors] = useState({});
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!linkedInUrl) newErrors.linkedInUrl = 'LinkedIn URL is required';
+    if (!profile.headline) newErrors.headline = 'Headline is required';
+    if (!profile.about) newErrors.about = 'About section is required';
+    if (!profile.firstName) newErrors.firstName = 'First Name is required';
+    if (!profile.lastName) newErrors.lastName = 'Last Name is required';
+    if (!profile.skills) newErrors.skills = 'Skills are required';
+    if (profile.categories.length === 0)
+      newErrors.categories = 'At least one category is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSubmitProfile = async () => {
-    const {
-      firstName,
-      lastName,
-      headline,
-      about,
-      skills,
-      experience,
-      education,
-      categories,
-      pricing,
-      freeSession,
-    } = profile;
-
-    if (!firstName || !lastName) {
-      alert('Please fill in the first name and last name fields.');
-      return;
-    }
-
     setError('');
+
+    if (!validateFields()) return;
+
+    setErrors({});
+
     setSubmitting(true);
     const loginState = JSON.parse(localStorage.getItem('login_state'));
     const profileDetails = {
-      Id: loginState.Id,
-      LastName: lastName,
-      FirstName: firstName,
-      Headline: headline,
-      About: about,
-      Skills: skills,
-      Experience:
-        experience.map((exp) => ({
-          Title: exp.Title,
-          Company: exp.CompanyName,
-          StartDate: exp.timePeriod?.startDate || '',
-          EndDate: exp.timePeriod?.endDate || '',
-          Description: exp.description,
-        })) ?? [],
-      Education:
-        education.map((edu) => ({
-          Degree: edu.DegreeName,
-          FieldOfStudy: edu.FieldOfStudy,
-          University: edu.University,
-          StartDate: edu.timePeriod?.startDate || '',
-          EndDate: edu.timePeriod?.endDate || '',
-        })) ?? [],
-      Categories: categories,
-      Pricing: pricing,
-      FreeSession: freeSession,
+      FirstName: profile.firstName,
+      LastName: profile.lastName,
+      Headline: profile.headline,
+      LinkedInUrl: profile.LinkedInUrl,
+      Skills: profile.skills.split(',').map((skill) => skill.trim()),
+      About: profile.about,
+
+      Experience: profile.experience.map((exp) => ({
+        Title: exp.Title,
+        Company: exp.CompanyName,
+
+        StartDate: exp.timePeriod?.startDate,
+        EndDate: exp.timePeriod?.endDate,
+
+        Description: exp.Description,
+      })),
+      Education: profile.education.map((edu) => ({
+        Degree: edu.Degree,
+        FieldOfStudy: edu.FieldOfStudy,
+        'University/School': edu.University,
+        StartDate: edu.timePeriod?.startDate,
+        EndDate: edu.timePeriod?.endDate,
+      })),
+      AreaOfExpertise: profile.categories,
+      Pricing: profile.pricing,
+      FreeSession: profile.freeSession,
     };
 
     const token = localStorage.getItem('token');
 
     try {
+      const userInfo = {
+        Id: loginState.Id,
+        Service: 'Mentorship',
+        Role: 'Mentor',
+        Email: userKeys.email,
+        Profile: {
+          Jobs: {
+            Seeker: true,
+          },
+        },
+        Profile_details: profileDetails,
+      };
+      const formData = new FormData();
+      formData.append('userInfo', JSON.stringify(userInfo));
+
       const response = await fetch(
         'https://uniedge-prospect-functions.azurewebsites.net/adduser',
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            Id: loginState.id,
-            Service: serviceName,
-            Role: role,
-            Email: userKeys.email,
-            Profile: {},
-            Profile_details: profileDetails,
-          }),
+          body: formData,
         }
       );
 
-      const data = await response.json();
-      localStorage.setItem('login_state', JSON.stringify(data));
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('login_state', JSON.stringify(data));
+      }
       setSuccess(true);
     } catch (error) {
       console.error('Error submitting profile:', error);
@@ -268,12 +286,8 @@ const MentorProfile = () => {
       ) : (
         <Grid2 container spacing={4}>
           <Grid2 item size={12}>
-            {error && <Alert variant='danger'>{error}</Alert>}
-            {success && (
-              <Alert variant='success'>
-                Your profile has been successfully saved.
-              </Alert>
-            )}
+            {error && <Alert severity='error'>{error}</Alert>}
+            {success && <Alert severity='success'>{success}</Alert>}
           </Grid2>
           <Grid2
             item
@@ -287,7 +301,7 @@ const MentorProfile = () => {
                 <Typography variant='h5'>
                   Import Profile From LinkedIn
                 </Typography>
-                <Stack direction={'row'}>
+                <Stack direction='row'>
                   <TextField
                     value={linkedInUrl}
                     onChange={handleLinkedInUrlChange}
@@ -317,19 +331,31 @@ const MentorProfile = () => {
               <Stack spacing={1}>
                 <Typography variant='h5'>Profile Information</Typography>
 
-                {/* headline */}
                 <TextField
                   label='Headline'
+                  required
                   value={profile.headline}
                   onChange={(e) =>
                     setProfile({ ...profile, headline: e.target.value })
                   }
                   fullWidth
+                  error={!!errors.headline}
+                  helperText={errors.headline}
                 />
 
-                {/* about */}
+                <TextField
+                  label='LinkedIn URL'
+                  required
+                  value={linkedInUrl}
+                  onChange={handleLinkedInUrlChange}
+                  fullWidth
+                  error={!!errors.linkedInUrl}
+                  helperText={errors.linkedInUrl}
+                />
+
                 <TextField
                   label='About'
+                  required
                   value={profile.about}
                   onChange={(e) =>
                     setProfile({ ...profile, about: e.target.value })
@@ -337,34 +363,45 @@ const MentorProfile = () => {
                   fullWidth
                   multiline
                   rows={4}
+                  error={!!errors.about}
+                  helperText={errors.about}
                 />
 
-                <Stack direction={'row'} spacing={1}>
+                <Stack direction='row' spacing={1}>
                   <TextField
                     label='First Name'
+                    required
                     value={profile.firstName}
                     onChange={(e) =>
                       setProfile({ ...profile, firstName: e.target.value })
                     }
                     fullWidth
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
                   />
                   <TextField
                     label='Last Name'
+                    required
                     value={profile.lastName}
                     onChange={(e) =>
                       setProfile({ ...profile, lastName: e.target.value })
                     }
                     fullWidth
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
                   />
                 </Stack>
 
                 <TextField
                   label='Skills'
+                  required
                   value={profile.skills}
                   onChange={(e) =>
                     setProfile({ ...profile, skills: e.target.value })
                   }
                   fullWidth
+                  error={!!errors.skills}
+                  helperText={errors.skills}
                 />
               </Stack>
 
@@ -387,6 +424,7 @@ const MentorProfile = () => {
             </Stack>
           </Grid2>
           <Grid2
+            item
             size={{
               xs: 12,
               md: 6,
@@ -394,9 +432,10 @@ const MentorProfile = () => {
           >
             <Stack spacing={2}>
               <Stack spacing={1}>
-                <Typography>Area of Experise</Typography>
+                <Typography>Area of Expertise</Typography>
                 <Select
                   multiple
+                  required
                   value={profile.categories}
                   onChange={(e) =>
                     setProfile({ ...profile, categories: e.target.value })
@@ -409,6 +448,7 @@ const MentorProfile = () => {
                       ))}
                     </Box>
                   )}
+                  error={!!errors.categories}
                 >
                   <MenuItem value='Career Guidance'>Career Guidance</MenuItem>
                   <MenuItem value='Leadership'>Leadership</MenuItem>
@@ -418,6 +458,9 @@ const MentorProfile = () => {
                     Personal Development
                   </MenuItem>
                 </Select>
+                {errors.categories && (
+                  <Typography color='error'>{errors.categories}</Typography>
+                )}
               </Stack>
               <Stack spacing={1}>
                 <Typography>Pricing: ${profile.pricing}</Typography>
@@ -434,19 +477,24 @@ const MentorProfile = () => {
                     checked={profile.freeSession === 'Yes'}
                     onChange={handleFreeSessionChange}
                     value='Yes'
-                  >
-                    Yes
-                  </Checkbox>
+                  />
                 }
                 label='Free Session'
               />
             </Stack>
-          </Grid2>{' '}
+          </Grid2>
+
+          {Object.keys(errors).length > 0 && (
+            <Grid2 item size={12}>
+              <Alert severity='error'>Please fill in all required fields</Alert>
+            </Grid2>
+          )}
+
           <LoadingButton
             variant='contained'
             color='secondary'
             onClick={handleSubmitProfile}
-            disabled={submitting || error}
+            disabled={submitting}
             loading={submitting}
             startIcon={<SaveOutlined />}
           >
