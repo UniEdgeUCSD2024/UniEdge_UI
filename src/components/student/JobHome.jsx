@@ -41,9 +41,9 @@ export default function JobHome() {
         <Row className='row-grid justify-content-between'>
           <Col md='5'>
             <div className='content-center brand' style={{ marginTop: '5rem' }}>
-              <h2 className='title'>Empowering Your Job Hunt Journey</h2>
-              <h4 className='description'>
-                Hey {userKeys ? userKeys.username : ''}, UniEdge understands the
+              <h2 className='title' style={{ fontWeight: 'bold' }} >Empowering Your Job Hunt Journey</h2>
+              <h4 className='description' style={{ fontSize: '18px' }}>
+                Hey , UniEdge understands the
                 challenges in today's job market. Whether you're seeking a
                 career or top talent, we're here to help. Explore tailored job
                 services, access expert coaching, and connect with the best
@@ -69,8 +69,8 @@ export default function JobHome() {
         </Row>
 
         <Row className='justify-content-center my-5 py-5'>
-          <Col lg='12'>
-            <h1 className='text-center'>Our Benefits</h1>
+          <Col lg='20'>
+            <h1 className='text-center'style={{ fontWeight: 'bold' }}>Our Benefits</h1>
             <Row className='row-grid justify-content-center'>
               <Col lg='3' className='text-center'>
                 <div className='info'>
@@ -99,6 +99,19 @@ export default function JobHome() {
                   <p>Customized Coaching for Career Success</p>
                 </div>
               </Col>
+              <Col lg='5' className='text-center'>
+                <div className='info'>
+                  <div className='icon icon-primary'>
+                    <i className='fas fa-comments' />
+                  </div>
+                  <h4 className='info-title'>Customized Mock Interview</h4>
+                  <p>Get Customized Practice Interviews</p>
+                  {/* Add a button below the description */}
+                  <Button color='info' onClick={() => navigate('/freeinterview')} className='mt-2'>
+                    Try for FREE
+                  </Button>
+                </div>
+              </Col>              
             </Row>
           </Col>
         </Row>

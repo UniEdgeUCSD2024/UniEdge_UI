@@ -22,6 +22,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Mentorship from './components/Mentorship/Mentorship';
 import ThemeProvider from './components/styles/ThemeProvider';
 import MentorProfilePage from './pages/MentorProfilePage';
+import HumeEmbedPage from './pages/HumeEmbedPage';
+import FreeInterviewPage from './pages/FreeInterviewPage';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,14 @@ const App = () => {
                   path='/mentorregister'
                   element={<MentorRegisterPage />}
                 />
+                <Route
+                  path='/mockinterview'
+                  element={<HumeEmbedPage />}
+                />    
+                <Route
+                  path='/freeinterview'
+                  element={<FreeInterviewPage />}
+                />                              
               </Route>
             </Routes>
           </AuthProvider>

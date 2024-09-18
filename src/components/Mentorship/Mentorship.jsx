@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import HumeEmbed from '../HumeEmbed';
 
 const Mentorship = () => {
   const navigate = useNavigate();
@@ -90,8 +89,6 @@ const Mentorship = () => {
                 </Button>
                 <Button variant='contained'>Mentee</Button>
               </Stack>
-
-              <HumeEmbed />
             </Stack>
           </Grid2>
 

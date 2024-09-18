@@ -11,15 +11,25 @@ import {
   Form,
   Row,
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate for navigation
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
+const states = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 
+  'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia', 
+  'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 
+  'Louisiana', 'Maine', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 
+  'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 
+  'Ohio', 'Oklahoma', 'Oregon', 'Maryland', 'Massachusetts', 'Michigan', 
+  'Minnesota', 'Mississippi', 'Missouri', 'Pennsylvania', 'Rhode Island', 
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
 function InternshipDetails() {
+  const navigate = useNavigate(); // Initialize navigate for page navigation
   const [selectedStates, setSelectedStates] = useState([]);
-
-  // const [selectedDateFilter, setSelectedDateFilter] = useState('');
-
   const [loading, setLoading] = useState(false);
   const [jobDetails, setJobDetails] = useState({});
   const [selectedJobType, setSelectedJobType] = useState('');
@@ -31,62 +41,7 @@ function InternshipDetails() {
     .Profile?.Jobs?.Seeker;
 
   const [selectedSource, setSelectedSource] = useState('Uniedge');
-
   const [selectedType, setSelectedType] = useState('DataAnalyst');
-
-  const states = [
-    'Alabama',
-    'Alaska',
-    'Arizona',
-    'Arkansas',
-    'California',
-    'Colorado',
-    'Connecticut',
-    'Delaware',
-    'District of Columbia',
-    'Florida',
-    'Georgia',
-    'Hawaii',
-    'Idaho',
-    'Illinois',
-    'Indiana',
-    'Iowa',
-    'Kansas',
-    'Kentucky',
-    'Louisiana',
-    'Maine',
-    'Montana',
-    'Nebraska',
-    'Nevada',
-    'New Hampshire',
-    'New Jersey',
-    'New Mexico',
-    'New York',
-    'North Carolina',
-    'North Dakota',
-    'Ohio',
-    'Oklahoma',
-    'Oregon',
-    'Maryland',
-    'Massachusetts',
-    'Michigan',
-    'Minnesota',
-    'Mississippi',
-    'Missouri',
-    'Pennsylvania',
-    'Rhode Island',
-    'South Carolina',
-    'South Dakota',
-    'Tennessee',
-    'Texas',
-    'Utah',
-    'Vermont',
-    'Virginia',
-    'Washington',
-    'West Virginia',
-    'Wisconsin',
-    'Wyoming',
-  ];
 
   const jobsQuery = useQuery({
     queryKey: ['jobs', selectedType, isProfileComplete],
@@ -113,7 +68,7 @@ function InternshipDetails() {
             }),
           }),
         }
-      ); // autoselect first job
+      );
 
       if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -134,12 +89,6 @@ function InternshipDetails() {
         }
       } else if (Array.isArray(response)) {
         if (response.length > 0) {
-          // fetchJobData({
-          //   jobId: response[0].job_id,
-          //   type: selectedType,
-          //   job: response[0],
-          // });
-          // setSelectedJobType(selectedType);
         }
       }
 
@@ -213,6 +162,42 @@ function InternshipDetails() {
 
   const clearAllStates = () => {
     setSelectedStates([]);
+  };
+
+  const handleMockInterview = async () => {
+    try {
+      // Fetch resume when "Mock Interview" button is clicked
+      const resumeResponse = await axios.post(
+        'https://uniedge-prospect-functions.azurewebsites.net/fetchresume',
+        {
+          Id: user.Id,
+          Email: user.Email,
+          Profile: {
+            jobs: {
+              Seeker: true,
+            },
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const resume = resumeResponse.data.resume_text; // Assuming resume is in resume field
+
+      // Pass job_title, job_description, and resume to mock interview page
+      navigate('/mockinterview', {
+        state: {
+          job_title: jobDetails.job_title,
+          job_description: jobDetails.job_description,
+          resume: resume,
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching resume:', error);
+    }
   };
 
   return (
@@ -426,25 +411,46 @@ function InternshipDetails() {
                       </div>
                       <div className='d-flex align-items-center'>
                         {jobDetails.source === 'Uniedge' && (
-                          <Button
-                            variant={
-                              markedAsInterested ? 'success' : 'outline-success'
-                            }
-                            className='fw-bold'
-                            onClick={(e) => handleInterest(e)}
-                          >
-                            {/* if interested thumbs up */}
-                            {markedAsInterested
-                              ? 'Interested'
-                              : 'Show Interest'}
-                          </Button>
+                          <>
+                            <Button
+                              variant={
+                                markedAsInterested
+                                  ? 'success'
+                                  : 'outline-success'
+                              }
+                              className='fw-bold'
+                              onClick={(e) => handleInterest(e)}
+                            >
+                              {markedAsInterested
+                                ? 'Interested'
+                                : 'Show Interest'}
+                            </Button>
+                            {/* Mock Interview Button */}
+                            <Button
+                              variant='outline-primary'
+                              className='ms-3 fw-bold'
+                              onClick={handleMockInterview} // Fetch resume and pass job details to mock interview page
+                            >
+                              Mock Interview
+                            </Button>
+                          </>
                         )}
                         {jobDetails.company_link && (
-                          <a href={jobDetails.company_link}>
-                            <Button variant='success' className='fw-bold'>
-                              Apply on employer site
+                          <>
+                            <a href={jobDetails.company_link}>
+                              <Button variant='success' className='fw-bold'>
+                                Apply on employer site
+                              </Button>
+                            </a>
+                            {/* Mock Interview Button next to Apply on Employer Site */}
+                            <Button
+                              variant='outline-primary'
+                              className='ms-3 fw-bold'
+                              onClick={handleMockInterview} // Same functionality as the first Mock Interview button
+                            >
+                              Mock Interview
                             </Button>
-                          </a>
+                          </>
                         )}
                       </div>
                     </div>
@@ -526,11 +532,6 @@ function InternshipDetails() {
                     )}
 
                     <hr />
-
-                    {/* company details */}
-                    {/* "company_link": "https://www.linkedin.com/company/peerlogic?trk=public_jobs_jserp-result_job-search-card-subtitle",
-        "company_location": "Scottsdale, AZ",
-        "company_name": "Peerlogic", */}
 
                     {jobDetails.company_name && (
                       <p>
