@@ -71,11 +71,7 @@ const Mentorship = () => {
                 Mentorship
               </Typography>
               <Typography variant='body1'>
-                Hey , UniEdge understands the challenges in today's job market.
-                Whether you're seeking a career or top talent, we're here to
-                help. Explore tailored job services, access expert coaching, and
-                connect with the best opportunities or candidates. Together,
-                let's unlock your professional future.
+                Hey ,We know that the right guidance can be a game-changer in your personal and professional growth. Whether you're on the lookout for a mentor to help you climb the career ladder or eager to share your wisdom and shape the future of others, we've got your back. Explore tailored mentoring, gain insights from seasoned mentors, and connect with a community of like-minded individuals.
               </Typography>
 
               <Stack direction={'row'} spacing={1}>

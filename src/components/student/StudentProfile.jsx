@@ -9,7 +9,7 @@ import {
   Card,
   Alert,
 } from 'react-bootstrap';
-import { FaMinus } from 'react-icons/fa';
+import { FaMinus, FaFilePdf } from 'react-icons/fa';  // Importing PDF icon from FontAwesome
 import { AuthContext } from '../../context/AuthContext';
 import { useParams } from 'react-router-dom';
 import { capitalize } from 'lodash';
@@ -32,6 +32,7 @@ const ProfileForm = () => {
     headline: '',
   });
   const [resume, setResume] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState(''); // Added state to store resume URL
   const [resumeError, setResumeError] = useState(''); // Error for non-PDF files
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -130,6 +131,9 @@ const ProfileForm = () => {
               endDate: edu.EndDate,
             })) || [],
           }));
+
+          // Set the resume URL
+          setResumeUrl(data.Resume || ''); // Assuming the resume URL comes as 'Resume' in the response
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -140,6 +144,16 @@ const ProfileForm = () => {
 
     fetchProfile();
   }, []);
+
+  // Extract the file name from the resume URL after userId_
+  const getResumeFileName = (url) => {
+    if (!url) return '';
+    const parts = url.split('_');
+    if (parts.length > 1) {
+      return parts.slice(1).join('_'); // Join parts after the user ID part
+    }
+    return parts[0];
+  };
 
   const handleSubmitProfile = async () => {
     const { firstName, lastName, experience, education, headline } = profile;
@@ -264,6 +278,21 @@ const ProfileForm = () => {
               <Form.Group controlId='formFile'>
                 <Form.Control type='file' onChange={handleResumeUpload} />
                 {resumeError && <p style={{ color: 'red' }}>{resumeError}</p>}
+                
+                {/* Display the fetched resume as a link with PDF icon inside the form group */}
+                {resumeUrl && (
+                  <div className="mt-2 d-flex align-items-center">
+                    <FaFilePdf size={24} style={{ marginRight: '10px', color: 'red' }} />
+                    <a
+                      href={resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontWeight: 'bold' }}
+                    >
+                      {getResumeFileName(resumeUrl)}
+                    </a>
+                  </div>
+                )}
               </Form.Group>
             </Col>
           )}

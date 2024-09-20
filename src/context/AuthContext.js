@@ -15,27 +15,55 @@ export function AuthProvider({ children }) {
   const [userKeys, setUserKeys] = useState(null);
 
   async function signup(email, password) {
-    const response = await auth.createUserWithEmailAndPassword(email, password);
-    console.log('response', response);
-    const userId = response.user.uid;
-    await set(ref(database, 'users/' + userId), {
-      email: email,
-    });
-    console.log('user created');
-    const token = await response.user.getIdToken();
-    localStorage.setItem('token', token);
-    console.log({ token });
-    return;
+    try {
+      const response =  await auth.createUserWithEmailAndPassword(email, password);
+      console.log('response', response);
+      const userId = response.user.uid;
+      await set(ref(database, 'users/' + userId), {
+        email: email,
+      });
+      console.log('user created');
+      const token = await response.user.getIdToken();
+      localStorage.setItem('token', token);
+      console.log('cehck point reached')
+      return;
+    } catch (error) {
+      // Catch Firebase error and throw meaningful messages
+      const errorCode = error.code;
+      console.log('error code ', errorCode)
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          throw new Error('This email is already registered. Please login or use another email.');
+        case 'auth/invalid-email':
+          throw new Error('The email address is not valid. Please enter a valid email.');
+        case 'auth/weak-password':
+          throw new Error('The password is too weak. Please use a stronger password.');
+        default:
+          throw new Error('Failed to create account. Please try again.');
+      }
+    }
   }
 
   async function login(email, password) {
-    const auth = getAuth();
-    const response = await signInWithEmailAndPassword(auth, email, password);
-    const userId = response.user.uid;
-    const token = await response.user.getIdToken(); // Get the JWT token
-    await fetchKeys(userId);
-    localStorage.setItem('token', token); // Optionally store the token in localStorage
-    return response.user;
+    try {
+      const response = await auth.signInWithEmailAndPassword(email, password);
+      const token = await response.user.getIdToken();
+      localStorage.setItem('token', token);
+      console.log('Token stored after login:', token);
+    } catch (error) {
+      console.error('Error during login:', error);
+      switch (error.code) {
+        case 'auth/user-not-found':
+          throw new Error('User not found. Please check your email and password.');
+        case 'auth/wrong-password':
+          throw new Error('Incorrect password. Please try again.');
+        case 'auth/invalid-email':
+          throw new Error('The email address is not valid.');
+        default:
+          throw new Error('Failed to log in. Please try again.');
+      }
+    }
   }
 
   async function fetchKeys(userId) {
@@ -47,7 +75,6 @@ export function AuthProvider({ children }) {
         resolve(data);
       });
     });
-    return;
   }
 
   function logout() {
@@ -67,10 +94,6 @@ export function AuthProvider({ children }) {
 
   function updatePassword(password) {
     return currentUser.updatePassword(password);
-  }
-
-  function resetPassword(email) {
-    return auth.sendPasswordResetEmail(email);
   }
 
   useEffect(() => {

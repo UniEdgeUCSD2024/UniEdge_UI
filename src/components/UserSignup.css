@@ -1,0 +1,126 @@
+/* General Styling */
+body {
+  background-color: #f4f4f9;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Signup Card Styling */
+.signup-card {
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.signup-header {
+  font-size: 3rem;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-alert {
+  background-color: #ff6b6b;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Form Styling */
+.form-control-custom {
+  height: 50px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.form-control-custom:focus {
+  border-color: #007bff;
+  box-shadow: none;
+}
+
+/* Button Styling */
+.signup-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+.signup-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Link Styling */
+.signup-link {
+  color: #007bff;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* Loading Spinner and Motivational Text */
+.custom-spinner {
+  width: 4rem;
+  height: 4rem;
+  color: #007bff;
+}
+
+.loading-section {
+  margin-bottom: 20px;
+}
+
+.motivational-text {
+  font-size: 1.8rem;
+  color: #343a40;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f1f3f5;
+  font-family: 'Pacifico', cursive; /* Add a unique font style */
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  animation: textPulse 1.5s infinite;
+}
+
+/* Animations */
+@keyframes textPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .signup-card {
+    padding: 20px;
+  }
+
+  .signup-header {
+    font-size: 2.5rem;
+  }
+
+  .motivational-text {
+    font-size: 1.5rem;
+  }
+}

@@ -20,6 +20,7 @@ import Poster from './pages/Poster';
 import Services from './components/services/Services';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Mentorship from './components/Mentorship/Mentorship';
+import MentorHome from './components/Mentoring/MentorHome';
 import ThemeProvider from './components/styles/ThemeProvider';
 import MentorProfilePage from './pages/MentorProfilePage';
 import HumeEmbedPage from './pages/HumeEmbedPage';
@@ -48,7 +49,7 @@ const App = () => {
               <Route element={<PrivateRoute />}>
                 <Route path='/home' element={<Services />} />
                 <Route path='/jobs' element={<StudentHomePage />} />
-                <Route path='/mentorship' element={<Mentorship />} />
+                <Route path='/mentorship' element={<MentorHome />} />
                 <Route path='/recruiter' element={<RecruiterHomePage />} />
                 <Route path='/internships' element={<InternshipsPage />} />
                 <Route path='/services' element={<ServicesPage />} />
