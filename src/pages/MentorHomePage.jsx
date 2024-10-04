@@ -1,12 +1,12 @@
 import React from 'react';
-import StudentNavbar from '../components/Navbars/StudentNavbar';
+import MentorshipNavbar from '../components/Navbars/MentorshipNavbar';
 import MentorHome from '../components/Mentoring/MentorHome';
 // import MentorHome from './MentorHome';
 
 const MentorHomePage = () => {
   return (
     <>
-      <StudentNavbar />
+      <MentorshipNavbar />
       <MentorHome />
     </>
   );

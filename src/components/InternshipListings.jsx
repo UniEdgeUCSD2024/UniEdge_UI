@@ -184,12 +184,14 @@ function InternshipDetails() {
           },
         }
       );
-
+      const name = resumeResponse.data.name;
       const resume = resumeResponse.data.resume_text; // Assuming resume is in resume field
-
+      console.log("job details", jobDetails)
+      console.log("resume",resume)
       // Pass job_title, job_description, and resume to mock interview page
       navigate('/mockinterview', {
         state: {
+          name: name,
           job_title: jobDetails.job_title,
           job_description: jobDetails.job_description,
           resume: resume,

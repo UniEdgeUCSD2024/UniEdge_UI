@@ -28,25 +28,25 @@ const Services = () => {
       title: 'Life Coaching',
       subtitle: 'Transform Your Life Path',
       bgColor: '#C8BBFF',
-      link: '/#/learn',
+      // link: '/#/learn',
     },
     {
       title: 'Volunteering',
       subtitle: 'Make a Meaningful Impact',
       bgColor: '#FFDD80',
-      link: '/#/practice',
+      // link: '/#/practice',
     },
     {
       title: 'Networking',
       subtitle: 'Build Powerful Connections',
       bgColor: '#FEC192',
-      link: '/#/mentorship',
+      // link: '/#/mentorship',
     },
     {
       title: 'Personal Prospects',
       subtitle: 'Discover Your True Potential',
       bgColor: '#9BE6C1',
-      link: '/#/mentorship',
+      // link: '/#/mentorship',
     },
   ];
 

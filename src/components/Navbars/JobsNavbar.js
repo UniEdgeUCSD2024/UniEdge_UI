@@ -3,7 +3,7 @@ import { Button, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
-export default function StudentNavbar() {
+export default function JobsNavbar() {
   const navigate = useNavigate();
   const [scrolling, setScrolling] = useState(false);
   const { userKeys } = useContext(AuthContext);
@@ -48,9 +48,9 @@ export default function StudentNavbar() {
             <Nav.Link
               as={Button}
               variant='link'
-              onClick={() => navigate('/services')}
+              onClick={() => navigate('/home')}
             >
-              Services
+              Home
             </Nav.Link>
             <NavDropdown
               title={

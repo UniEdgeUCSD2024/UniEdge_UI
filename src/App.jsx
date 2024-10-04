@@ -5,7 +5,7 @@ import PrivateRoute from './components/PrivateRoute'; // Ensure this is correctl
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/LandingPage'; // Assuming this is a public page
-import StudentHomePage from './pages/StudentHomePage';
+import JobsHomePage from './pages/JobsHomePage';
 import RecruiterHomePage from './pages/RecruiterHomePage';
 import InternshipsPage from './pages/InternshipsPage';
 import ServicesPage from './pages/ServicesPage';
@@ -20,7 +20,7 @@ import Poster from './pages/Poster';
 import Services from './components/services/Services';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Mentorship from './components/Mentorship/Mentorship';
-import MentorHome from './components/Mentoring/MentorHome';
+import MentorHomePage from './pages/MentorHomePage';
 import ThemeProvider from './components/styles/ThemeProvider';
 import MentorProfilePage from './pages/MentorProfilePage';
 import HumeEmbedPage from './pages/HumeEmbedPage';
@@ -48,8 +48,8 @@ const App = () => {
               {/* Protected Routes */}
               <Route element={<PrivateRoute />}>
                 <Route path='/home' element={<Services />} />
-                <Route path='/jobs' element={<StudentHomePage />} />
-                <Route path='/mentorship' element={<MentorHome />} />
+                <Route path='/jobs' element={<JobsHomePage />} />
+                <Route path='/mentorship' element={<MentorHomePage />} />
                 <Route path='/recruiter' element={<RecruiterHomePage />} />
                 <Route path='/internships' element={<InternshipsPage />} />
                 <Route path='/services' element={<ServicesPage />} />

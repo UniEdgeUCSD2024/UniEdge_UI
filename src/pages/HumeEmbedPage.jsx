@@ -1,11 +1,11 @@
 import React from 'react';
-import StudentNavbar from '../components/Navbars/StudentNavbar';
+import MockInterviewNavbar from '../components/Navbars/MockInterviewNavbar';
 import HumeEmbed from '../components/HumeEmbed';
 
 const HumeEmbedPage = () => {
   return (
     <>
-      <StudentNavbar />
+      <MockInterviewNavbar />
       <HumeEmbed />
     </>
   );

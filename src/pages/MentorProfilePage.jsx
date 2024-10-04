@@ -1,12 +1,12 @@
 import React from "react";
 import MentorProfile from "../components/Mentoring/MentorProfile";
-import StudentNavbar from "../components/Navbars/StudentNavbar";
+import MentorProfileNavbar from "../components/Navbars/MentorProfileNavbar";
 
 
 const MentorProfilePage = () => {
     return (
         <>  
-            <StudentNavbar />
+            <MentorProfileNavbar />
             <MentorProfile />
         </>
     );

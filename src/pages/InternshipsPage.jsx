@@ -1,11 +1,11 @@
 import React from "react";
 import InternshipListings from "../components/internshipsListing/InternshipListings";
-import StudentNavbar from "../components/Navbars/StudentNavbar";
+import JobsListingNavbar from "../components/Navbars/JobListingNavbar";
 
 const InternshipsPage = () => {
   return (
     <>
-      <StudentNavbar />
+      <JobsListingNavbar />
       {/* <InternshipListings /> */}
       <InternshipListings />
       

@@ -3,7 +3,7 @@ import { Button, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
-export default function StudentNavbar() {
+export default function JobsListingNavbar() {
   const navigate = useNavigate();
   const [scrolling, setScrolling] = useState(false);
   const { userKeys } = useContext(AuthContext);
@@ -38,20 +38,16 @@ export default function StudentNavbar() {
           className='justify-content-end w-100'
         >
           <Nav className='ms-auto'>
+            {/* Careers Button, replacing Jobs and Services */}
             <Nav.Link
               as={Button}
               variant='link'
-              onClick={() => navigate('/internships')}
+              onClick={() => navigate('/jobs')}
             >
-              <i className='tim-icons icon-zoom-split' /> Jobs
+             Careers
             </Nav.Link>
-            <Nav.Link
-              as={Button}
-              variant='link'
-              onClick={() => navigate('/services')}
-            >
-              Services
-            </Nav.Link>
+
+            {/* User Profile Dropdown */}
             <NavDropdown
               title={
                 <span>

@@ -3,32 +3,68 @@ import { VoiceProvider, useVoice } from '@humeai/voice-react';
 import { useLocation } from 'react-router-dom';
 
 // Component to display the chat history
+// Component to display the chat history
+// Component to display the chat history
 const ChatHistory = ({ messages }) => {
+  const chatEndRef = useRef(null); // Reference to the end of the chat
+
+  // Scroll to the bottom of the chat history whenever a new message is added
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   return (
     <div
       style={{
         border: '1px solid #ddd',
         padding: '10px',
         marginTop: '10px',
-        height: '300px',
+        height: '400px', // Increased height for more chat visibility
         overflowY: 'auto',
-        backgroundColor: '#f9f9f9',
-        borderRadius: '10px',
+        backgroundColor: '#f4f4f4',
+        borderRadius: '15px',
         width: '80%',
         margin: 'auto',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow for a lifted effect
       }}
     >
-      <h4 style={{ textAlign: 'center', color: 'black' }}>Chat History</h4>
-      {messages.length === 0 && <p style={{ color: 'black' }}>No messages yet</p>}
+      <h4 style={{ textAlign: 'center', color: '#333', fontFamily: 'Arial, sans-serif' }}>Chat History</h4>
+      {messages.length === 0 && <p style={{ color: '#555', textAlign: 'center' }}>No messages yet</p>}
       {messages.map((message, index) => (
-        <div key={index} style={{ color: 'black', margin: '10px 0' }}>
-          <strong>{message.sender}: </strong>
-          <span>{message.text}</span>
+        <div
+          key={index}
+          style={{
+            display: 'flex',
+            justifyContent: message.sender.includes('User') ? 'flex-end' : 'flex-start',
+            margin: '10px 0',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '70%',
+              padding: '10px 15px',
+              borderRadius: '15px',
+              backgroundColor: message.sender.includes('User') ? '#007BFF' : '#E0E0E0', // Blue for user, grey for assistant
+              color: message.sender.includes('User') ? '#fff' : '#333',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              fontFamily: 'Arial, sans-serif',
+              fontSize: '14px',
+            }}
+          >
+            <strong>{message.sender}: </strong>
+            <span>{message.text}</span>
+          </div>
         </div>
       ))}
+      {/* This empty div will always be at the end of the chat */}
+      <div ref={chatEndRef}></div>
     </div>
   );
 };
+
+
 
 const HumeChat = () => {
   const {
@@ -46,10 +82,11 @@ const HumeChat = () => {
   const [chatHistory, setChatHistory] = useState([]); // Chat history state
   const [isConnecting, setIsConnecting] = useState(false); // To track if voice connection is being established
   const [isConnected, setIsConnected] = useState(false); // To track connection status
+  const [errorMessage, setErrorMessage] = useState(''); // To store the error message if not connected
   const voiceMessageProcessed = useRef(null); // To track if the voice message was already processed
   const sessionMessages = useRef([]); // To hold messages during a session
   const location = useLocation();
-  const { job_title, job_description, resume } = location.state || {};
+  const { job_title, job_description, resume, name } = location.state || {};
   const loginState = JSON.parse(localStorage.getItem('login_state'));
 
   const apiUrl = 'https://uniedge-prospect-functions.azurewebsites.net/storemockinterview';
@@ -72,11 +109,17 @@ const HumeChat = () => {
 
   // Handle text input submission
   const handleSendMessage = () => {
+    if (!isConnected) {
+      setErrorMessage('Please connect and then share your response.');
+      return;
+    }
+
     if (userInput.trim() !== '') {
       setChatHistory((prev) => [...prev, { sender: 'User (Text)', text: userInput }]);
       sendUserInput(userInput);
       sessionMessages.current.push({ sender: 'User (Text)', text: userInput });
       setUserInput('');
+      setErrorMessage(''); // Clear the error message if the message was sent successfully
     }
   };
 
@@ -211,6 +254,13 @@ const HumeChat = () => {
         </button>
       </div>
 
+      {/* Error message when not connected */}
+      {errorMessage && (
+        <p style={{ color: 'red', marginBottom: '20px' }}>
+          {errorMessage}
+        </p>
+      )}
+
       {/* Chat History */}
       <ChatHistory messages={chatHistory} />
 
@@ -222,7 +272,14 @@ const HumeChat = () => {
 const HumeEmbed = () => {
   const apiKey = process.env.REACT_APP_HUME_API_KEY || '';
   const location = useLocation();
-  const { name, job_title, job_description, resume } = location.state || {};
+  // console.log("location state",location.state)
+  const { custom_job_title, custom_job_description, candidate_resume, candidate_name } = location.state || {};
+  // const location = useLocation();
+  // const { candidate_name, custom_job_title, custom_job_description, candidate_resume } = location.state || {};
+
+  // console.log("name is ", name)
+  // console.log("job_title is ",job_title)
+  // console.log("job desc is", job_description)
 
   if (!apiKey) {
     return (
@@ -237,18 +294,25 @@ const HumeEmbed = () => {
     type: "session_settings",
     custom_session_id: "session1234", // Optional custom session ID
     variables: {
-      name: name || 'No Name Provided',  // Interviewee name (can be static or dynamic based on your needs)
-      job_title: job_title || 'Unknown Title',  // Job title from passed state
-      job_description: job_description || "No job description provided",  // Job description from passed state
-      resume: resume || "No resume provided"  // Resume text from passed state
+      name: candidate_name,
+      job_title: custom_job_title,
+      job_description: custom_job_description,
+      resume: candidate_resume
+      // name: name || 'No Name Provided',  // Interviewee name (can be static or dynamic based on your needs)
+      // job_title: job_title || 'Unknown Title',  // Job title from passed state
+      // job_description: job_description || "No job description provided",  // Job description from passed state
+      // resume: resume || "No resume provided"  // Resume text from passed state
     }
   };
+
+  console.log("session settings are",sessionSettings)
 
   return (
     <VoiceProvider
       auth={{ type: 'apiKey', value: apiKey }}
       hostname={process.env.REACT_APP_HUME_VOICE_HOSTNAME || 'api.hume.ai'}
       configId='c2881fa5-839f-471f-bbfd-23f6388b30da'
+      // configId='6a591a69-6070-471d-b74d-f522975f8c5f'
       sessionSettings={sessionSettings}
     >
       <HumeChat />
