@@ -3,8 +3,6 @@ import { VoiceProvider, useVoice } from '@humeai/voice-react';
 import { useLocation } from 'react-router-dom';
 
 // Component to display the chat history
-// Component to display the chat history
-// Component to display the chat history
 const ChatHistory = ({ messages }) => {
   const chatEndRef = useRef(null); // Reference to the end of the chat
 
@@ -88,24 +86,38 @@ const HumeChat = () => {
   const location = useLocation();
   const { job_title, job_description, resume, name } = location.state || {};
   const loginState = JSON.parse(localStorage.getItem('login_state'));
+  const [lastAssistantMessage, setLastAssistantMessage] = useState(null); // To track last assistant message
 
   const apiUrl = 'https://uniedge-prospect-functions.azurewebsites.net/storemockinterview';
 
   // Process both user and assistant messages
+  // Process both user and assistant messages
   useEffect(() => {
+    // Process user messages
     if (lastUserMessage && !lastUserMessage.fromText && lastUserMessage.message?.content !== voiceMessageProcessed.current) {
       const userMessageContent = lastUserMessage.message?.content || 'Unknown message';
       voiceMessageProcessed.current = userMessageContent;
+  
+      // Push the user message to chat history
       setChatHistory((prev) => [...prev, { sender: 'User (Voice)', text: userMessageContent }]);
       sessionMessages.current.push({ sender: 'User (Voice)', text: userMessageContent });
     }
-
+  
+    // Process assistant messages
     if (lastVoiceMessage) {
       const assistantMessageContent = lastVoiceMessage.message?.content || 'Unknown message';
-      setChatHistory((prev) => [...prev, { sender: 'Assistant', text: assistantMessageContent }]);
-      sessionMessages.current.push({ sender: 'Assistant', text: assistantMessageContent });
+  
+      // Check if the assistant message is the same as the last one to avoid duplication
+      if (assistantMessageContent !== lastAssistantMessage) {
+        setChatHistory((prev) => [...prev, { sender: 'Assistant', text: assistantMessageContent }]);
+        sessionMessages.current.push({ sender: 'Assistant', text: assistantMessageContent });
+  
+        // Update the last assistant message to prevent future duplication
+        setLastAssistantMessage(assistantMessageContent);
+      }
     }
   }, [lastUserMessage, lastVoiceMessage]);
+
 
   // Handle text input submission
   const handleSendMessage = () => {
@@ -144,40 +156,50 @@ const HumeChat = () => {
   };
 
   // Handle disconnection and sending chat history to the API
+  // Handle disconnection and sending chat history to the API
   const handleDisconnect = async () => {
-    disconnect();
-    setIsConnected(false); // Reset connection status when disconnected
+    // Check if "Thank you for your responses" is present in any assistant message in the chat history
+    const thankYouMessageExists = sessionMessages.current.some(
+      (msg) => msg.sender === 'Assistant' && msg.text.includes('Thank you for your responses')
+    );
 
-    if (sessionMessages.current.length > 0 && sessionMessages.current.some((msg) => msg.sender.includes('User'))) {
-      const timestamp = new Date().toISOString();
-      const fileName = `${loginState.Id}_${job_title}_${timestamp}.json`;
+    if (thankYouMessageExists) {
+      if (sessionMessages.current.length > 0 && sessionMessages.current.some((msg) => msg.sender.includes('User'))) {
+        const timestamp = new Date().toISOString();
+        const fileName = `${loginState.Id}_${job_title}_${timestamp}.json`;
 
-      const payload = {
-        filename: fileName,
-        chatHistory: sessionMessages.current,
-      };
+        const payload = {
+          filename: fileName,
+          chatHistory: sessionMessages.current,
+        };
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
 
-        if (!response.ok) {
-          throw new Error('Failed to send chat history to the API');
+          if (!response.ok) {
+            throw new Error('Failed to send chat history to the API');
+          }
+
+          console.log('Chat history successfully sent to the API');
+        } catch (err) {
+          console.error('Error sending chat history:', err);
+        } finally {
+          sessionMessages.current = []; // Clear session messages after sending
         }
-
-        console.log('Chat history successfully sent to the API');
-      } catch (err) {
-        console.error('Error sending chat history:', err);
-      } finally {
-        sessionMessages.current = []; // Clear session messages after sending
       }
     }
+
+    // Disconnect after checking and optionally saving the chat history
+    disconnect();
+    setIsConnected(false); // Reset connection status when disconnected
   };
+
 
   useEffect(() => {
     if (error) {
@@ -205,7 +227,7 @@ const HumeChat = () => {
           }}
           disabled={isConnected} // Disable button when connected
         >
-          {isConnecting ? 'Connecting...' : isConnected ? 'Connected' : 'Connect & Speak Now'}
+          {isConnecting ? 'Connecting...' : isConnected ? 'Connected' : 'Start Interview'}
         </button>
         <button
           onClick={handleDisconnect}
@@ -219,7 +241,7 @@ const HumeChat = () => {
           }}
           disabled={!isConnected} // Disable disconnect if not connected
         >
-          Disconnect
+          Save & End Interview
         </button>
       </div>
 

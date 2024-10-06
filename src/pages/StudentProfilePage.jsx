@@ -1,12 +1,12 @@
 import React from "react";
 import StudentProfile from "../components/student/StudentProfile";
-import StudentNavbar from "../components/Navbars/StudentNavbar";
+import StudentProfileNavbar from "../components/Navbars/StudentProfileNavbar";
 
 
 const StudentProfilePage = () => {
     return (
         <>  
-            <StudentNavbar />
+            <StudentProfileNavbar />
             <StudentProfile />
         </>
     );
