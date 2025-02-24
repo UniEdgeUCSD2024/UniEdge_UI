@@ -99,7 +99,7 @@ export default function JobHome() {
                   <p>Customized Coaching for Career Success</p>
                 </div>
               </Col>
-              <Col lg='5' className='text-center'>
+              <Col lg='4' className='text-center'>
                 <div className='info'>
                   <div className='icon icon-primary'>
                     <i className='fas fa-comments' />
@@ -109,6 +109,19 @@ export default function JobHome() {
                   {/* Add a button below the description */}
                   <Button color='info' onClick={() => navigate('/freeinterview')} className='mt-2'>
                     Try for FREE
+                  </Button>
+                </div>
+              </Col>
+              <Col lg='4' className='text-center'>
+                <div className='info'>
+                  <div className='icon icon-primary'>
+                    <i className='fas fa-comments' />
+                  </div>
+                  <h4 className='info-title'>T-Skills Building</h4>
+                  <p>Improve your Transferrable Skills</p>
+                  {/* Add a button below the description */}
+                  <Button color='info' onClick={() => navigate('/TSkills')} className='mt-2'>
+                    Try your Skills
                   </Button>
                 </div>
               </Col>              

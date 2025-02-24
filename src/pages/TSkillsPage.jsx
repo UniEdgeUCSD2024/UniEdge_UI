@@ -1,13 +1,13 @@
 import React from 'react';
 import MockInterviewNavbar from '../components/Navbars/MockInterviewNavbar';
-import FreeInterview from '../components/FreeInterview';
+import TSkills from '../components/TSkills';
 
-const FreeInterviewPage = () => {
+const TSkillsPage = () => {
   return (
     <>
       <MockInterviewNavbar />
-      <FreeInterview />
+      <TSkills />
     </>
   );
 };
-export default FreeInterviewPage;
+export default TSkillsPage;

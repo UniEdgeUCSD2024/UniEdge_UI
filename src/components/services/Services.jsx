@@ -43,10 +43,10 @@ const Services = () => {
       // link: '/#/mentorship',
     },
     {
-      title: 'Personal Prospects',
+      title: 'Pathway Counseling',
       subtitle: 'Discover Your True Potential',
       bgColor: '#9BE6C1',
-      // link: '/#/mentorship',
+      link: '/#/pathwaycounseling',
     },
   ];
 

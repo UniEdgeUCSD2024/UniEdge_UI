@@ -25,6 +25,8 @@ import ThemeProvider from './components/styles/ThemeProvider';
 import MentorProfilePage from './pages/MentorProfilePage';
 import HumeEmbedPage from './pages/HumeEmbedPage';
 import FreeInterviewPage from './pages/FreeInterviewPage';
+import TSkillsPage from './pages/TSkillsPage';
+import PathwayCounselingPage from './pages/PathwayCounselingPage';
 
 const queryClient = new QueryClient();
 
@@ -53,7 +55,7 @@ const App = () => {
                 <Route path='/recruiter' element={<RecruiterHomePage />} />
                 <Route path='/internships' element={<InternshipsPage />} />
                 <Route path='/services' element={<ServicesPage />} />
-
+                <Route path='/pathwaycounseling' element={<PathwayCounselingPage />} />
                 <Route
                   path='/mentorship/mentor/profile'
                   element={<MentorProfilePage />}
@@ -79,7 +81,11 @@ const App = () => {
                 <Route
                   path='/freeinterview'
                   element={<FreeInterviewPage />}
-                />                              
+                /> 
+                <Route
+                  path='/TSkills'
+                  element={<TSkillsPage />}
+                />                                
               </Route>
             </Routes>
           </AuthProvider>
